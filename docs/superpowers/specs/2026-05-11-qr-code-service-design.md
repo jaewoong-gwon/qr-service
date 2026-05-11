@@ -20,7 +20,7 @@
 | 프레임워크 | Next.js (App Router) |
 | 데이터베이스 | Supabase (PostgreSQL) |
 | 배포 | Vercel |
-| QR 생성 | qrcode.react (클라이언트 사이드) |
+| QR 생성 | react-qr-code (클라이언트 사이드, SVG) |
 | 인증 | 환경변수 비밀번호 + 서명된 JWT 쿠키 |
 
 ---
@@ -130,7 +130,8 @@ created_at   timestamptz  NOT NULL DEFAULT now()
 
 ## Error Handling
 
-- Drive URL 입력 시 Google Drive 공유 링크 형식 검증 (클라이언트 + 서버)
+- Drive URL 입력 시 Google Drive 공유 링크 형식 검증 (클라이언트 + 서버)  
+  허용 패턴: `https://drive.google.com/` 으로 시작하는 URL만 허용
 - `/r/[slug]` 미존재 → 404 안내 페이지 ("유효하지 않은 QR 코드입니다")
 - 로그인 실패 → 에러 메시지 표시 ("비밀번호가 올바르지 않습니다")
 
