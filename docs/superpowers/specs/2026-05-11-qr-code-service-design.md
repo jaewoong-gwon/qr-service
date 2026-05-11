@@ -30,7 +30,8 @@
 ```
 [관리자]
   └─ /admin/login → 비밀번호 입력
-  └─ /admin/dashboard (보호됨)
+  └─ /admin/dashboard (보호됨) → QR 목록 열람
+  └─ /admin/qr/new (보호됨)
        └─ 제품명 + Drive URL 입력
             └─ slug = SHA-256(drive_url).hex[:8]
             └─ POST /api/qr → DB upsert → slug 반환
@@ -81,7 +82,8 @@ created_at   timestamptz  NOT NULL DEFAULT now()
 |------|------|------|
 | `/` | `/admin/dashboard`로 리다이렉트 | 공개 |
 | `/admin/login` | 비밀번호 입력 폼 | 공개 |
-| `/admin/dashboard` | QR 목록 + 신규 생성 폼 | 보호됨 |
+| `/admin/dashboard` | 생성된 QR 목록 | 보호됨 |
+| `/admin/qr/new` | 새 QR 코드 생성 폼 | 보호됨 |
 | `/r/[slug]` | Drive URL로 302 리다이렉트 | 공개 |
 
 ### API
@@ -107,9 +109,24 @@ created_at   timestamptz  NOT NULL DEFAULT now()
 
 ## Admin Dashboard UI
 
+### `/admin/dashboard` — QR 목록
+
 ```
 ┌─────────────────────────────────────────┐
-│  QR Code Manager                [logout]│
+│  QR Code Manager         [+ 새 QR 생성] │
+│                                 [logout]│
+├─────────────────────────────────────────┤
+│  제품명      slug     생성일   QR  다운  │
+│  제품A      a1b2c3d4  2026-..  □   ↓   │
+│  제품B      e5f6g7h8  2026-..  □   ↓   │
+└─────────────────────────────────────────┘
+```
+
+### `/admin/qr/new` — QR 생성
+
+```
+┌─────────────────────────────────────────┐
+│  ← 목록으로                     [logout]│
 ├─────────────────────────────────────────┤
 │  제품명: [____________]                  │
 │  Drive URL: [______________________]    │
@@ -119,10 +136,6 @@ created_at   timestamptz  NOT NULL DEFAULT now()
 │  │ 생성된 QR 미리보기               │   │
 │  │ [PNG 다운로드]                   │   │
 │  └──────────────────────────────────┘   │
-├─────────────────────────────────────────┤
-│  제품명      slug     생성일   QR  다운  │
-│  제품A      a1b2c3d4  2026-..  □   ↓   │
-│  제품B      e5f6g7h8  2026-..  □   ↓   │
 └─────────────────────────────────────────┘
 ```
 
