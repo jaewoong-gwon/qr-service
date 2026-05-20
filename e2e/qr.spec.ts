@@ -9,7 +9,7 @@ const TEST_PRODUCT_NAME = 'E2E Test Product'
 
 async function login(page: import('@playwright/test').Page) {
   await page.goto('/admin/login')
-  await page.getByPlaceholder('비밀번호').fill(ADMIN_PASSWORD)
+  await page.getByPlaceholder('비밀번호').fill(ADMIN_PASSWORD!)
   await page.getByRole('button', { name: '로그인' }).click()
   await expect(page).toHaveURL('/admin/dashboard')
 }
