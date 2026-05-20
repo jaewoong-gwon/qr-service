@@ -42,8 +42,9 @@ export default function NewQrPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">제품명</label>
+          <label htmlFor="product-name" className="block text-sm font-medium mb-1">제품명</label>
           <input
+            id="product-name"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
             className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -51,8 +52,9 @@ export default function NewQrPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Google Drive URL</label>
+          <label htmlFor="drive-url" className="block text-sm font-medium mb-1">Google Drive URL</label>
           <input
+            id="drive-url"
             value={driveUrl}
             onChange={(e) => setDriveUrl(e.target.value)}
             placeholder="https://drive.google.com/..."
