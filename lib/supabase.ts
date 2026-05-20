@@ -5,11 +5,14 @@ type Database = {
   public: {
     Tables: {
       qr_codes: {
-        Row: QrCode
-        Insert: Omit<QrCode, 'id' | 'created_at'>
-        Update: Partial<Omit<QrCode, 'id' | 'created_at'>>
+        Row: QrCode & Record<string, unknown>
+        Insert: Omit<QrCode, 'id' | 'created_at'> & Record<string, unknown>
+        Update: Partial<Omit<QrCode, 'id' | 'created_at'>> & Record<string, unknown>
+        Relationships: []
       }
     }
+    Views: { [_ in never]: never }
+    Functions: { [_ in never]: never }
   }
 }
 
