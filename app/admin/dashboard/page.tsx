@@ -4,6 +4,8 @@ import { QrTable } from '@/components/QrTable'
 import { LogoutButton } from '@/components/LogoutButton'
 import type { QrCode } from '@/lib/types'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const supabase = createServerSupabaseClient()
   const { data } = await supabase
