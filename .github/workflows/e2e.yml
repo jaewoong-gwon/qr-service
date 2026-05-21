@@ -28,6 +28,7 @@ jobs:
         run: npx playwright test
         env:
           BASE_URL: ${{ steps.vercel.outputs.url }}
+          E2E_ADMIN_ID: ${{ secrets.E2E_ADMIN_ID }}
           E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
 
       - name: Upload Playwright report
