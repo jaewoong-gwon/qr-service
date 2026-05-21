@@ -3,7 +3,7 @@ import type { QrCode } from '@/lib/types'
 
 interface Admin {
   id: string
-  email: string
+  admin_id: string
   password_hash: string
   created_at: string
 }

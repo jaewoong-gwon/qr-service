@@ -4,11 +4,11 @@ import { createServerSupabaseClient } from '@/lib/supabase'
 import { signJWT } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
-  const { email, password } = await request.json()
+  const { admin_id, password } = await request.json()
 
-  if (!email || !password) {
+  if (!admin_id || !password) {
     return NextResponse.json(
-      { error: '이메일과 비밀번호를 입력해주세요' },
+      { error: '아이디와 비밀번호를 입력해주세요' },
       { status: 400 }
     )
   }
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const { data: admin } = await supabase
     .from('admins')
     .select('password_hash')
-    .eq('email', email)
+    .eq('admin_id', admin_id)
     .single()
 
   const valid =
@@ -25,12 +25,12 @@ export async function POST(request: NextRequest) {
 
   if (!valid) {
     return NextResponse.json(
-      { error: '이메일 또는 비밀번호가 올바르지 않습니다' },
+      { error: '아이디 또는 비밀번호가 올바르지 않습니다' },
       { status: 401 }
     )
   }
 
-  const token = await signJWT({ sub: email })
+  const token = await signJWT({ sub: admin_id })
   const response = NextResponse.json({ success: true })
 
   response.cookies.set('auth_token', token, {

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const [adminId, setAdminId] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,7 +18,7 @@ export default function LoginPage() {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ admin_id: adminId, password }),
     })
 
     if (res.ok) {
@@ -38,10 +38,10 @@ export default function LoginPage() {
       >
         <h1 className="text-xl font-bold text-center">QR Code Manager</h1>
         <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="이메일"
+          type="text"
+          value={adminId}
+          onChange={(e) => setAdminId(e.target.value)}
+          placeholder="아이디"
           className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
           autoFocus
