@@ -1,6 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 import type { QrCode } from '@/lib/types'
 
+interface Admin {
+  id: string
+  email: string
+  password_hash: string
+  created_at: string
+}
+
 type Database = {
   public: {
     Tables: {
@@ -8,6 +15,12 @@ type Database = {
         Row: QrCode & Record<string, unknown>
         Insert: Omit<QrCode, 'id' | 'created_at'> & Record<string, unknown>
         Update: Partial<Omit<QrCode, 'id' | 'created_at'>> & Record<string, unknown>
+        Relationships: []
+      }
+      admins: {
+        Row: Admin & Record<string, unknown>
+        Insert: Omit<Admin, 'id' | 'created_at'> & Record<string, unknown>
+        Update: Partial<Omit<Admin, 'id' | 'created_at'>> & Record<string, unknown>
         Relationships: []
       }
     }
