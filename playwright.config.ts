@@ -6,6 +6,9 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL ?? 'http://localhost:3000',
     storageState: 'e2e/.auth/state.json',
+    extraHTTPHeaders: process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+      ? { 'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET }
+      : undefined,
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
