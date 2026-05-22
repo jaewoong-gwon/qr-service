@@ -84,7 +84,7 @@ export function QrTable({ items }: QrTableProps) {
               <button
                 onClick={() => setDownloadItem(item)}
                 aria-label={`${item.products?.name ?? item.slug} QR 코드 다운로드`}
-                className="w-24 p-2 bg-cream border border-gold/30 rounded-lg flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity"
+                className="w-24 h-24 p-2 bg-cream border border-gold/30 rounded-lg flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity"
                 title="클릭하여 다운로드"
               >
                 <QRCode value={`${baseUrl}/r/${item.slug}`} size={80} fgColor="#3D2B1F" bgColor="#F5EFE0" />
