@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Product } from '@/lib/types'
 import type { DriveImage } from '@/lib/drive'
+import { driveThumbUrl } from '@/lib/drive'
 
 interface ProductPageViewProps {
   product: Product | null
@@ -33,7 +34,7 @@ export function ProductPageView({ product, images }: ProductPageViewProps) {
               className="aspect-square overflow-hidden rounded"
             >
               <img
-                src={img.thumbnailLink}
+                src={driveThumbUrl(img.id)}
                 alt={img.name}
                 className="w-full h-full object-cover"
               />
@@ -81,7 +82,7 @@ export function ProductPageView({ product, images }: ProductPageViewProps) {
           onClick={() => setSelectedImage(null)}
         >
           <img
-            src={selectedImage.webContentLink}
+            src={driveThumbUrl(selectedImage.id, 2000)}
             alt={selectedImage.name}
             className="max-w-full max-h-full object-contain rounded"
             onClick={(e) => e.stopPropagation()}

@@ -1,8 +1,10 @@
 export interface DriveImage {
   id: string
   name: string
-  thumbnailLink: string
-  webContentLink: string
+}
+
+export function driveThumbUrl(id: string, width = 400): string {
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w${width}`
 }
 
 export async function getFolderImages(folderUrl: string): Promise<DriveImage[]> {
@@ -13,7 +15,7 @@ export async function getFolderImages(folderUrl: string): Promise<DriveImage[]> 
   const res = await fetch(
     `https://www.googleapis.com/drive/v3/files` +
       `?q=%27${folderId}%27+in+parents+and+mimeType+contains+%27image/%27` +
-      `&fields=files(id,name,thumbnailLink,webContentLink)` +
+      `&fields=files(id,name)` +
       `&key=${process.env.GOOGLE_DRIVE_API_KEY}`,
     { next: { revalidate: 300 } } as RequestInit
   )
