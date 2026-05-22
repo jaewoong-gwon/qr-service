@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { getFolderImages } from '@/lib/drive'
+import { getFolderImages, driveThumbUrl } from '@/lib/drive'
 
 beforeEach(() => {
   process.env.GOOGLE_DRIVE_API_KEY = 'test-api-key'
@@ -12,14 +12,7 @@ afterEach(() => {
 
 describe('getFolderImages', () => {
   it('유효한 폴더 URL에서 이미지 목록을 반환한다', async () => {
-    const mockImages = [
-      {
-        id: 'img1',
-        name: 'photo1.jpg',
-        thumbnailLink: 'https://thumb1.example.com',
-        webContentLink: 'https://content1.example.com',
-      },
-    ]
+    const mockImages = [{ id: 'img1', name: 'photo1.jpg' }]
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ files: mockImages }),
@@ -33,6 +26,15 @@ describe('getFolderImages', () => {
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining('abc123XYZ'),
       expect.any(Object)
+    )
+  })
+
+  it('driveThumbUrl은 Drive 썸네일 URL을 생성한다', () => {
+    expect(driveThumbUrl('img1')).toBe(
+      'https://drive.google.com/thumbnail?id=img1&sz=w400'
+    )
+    expect(driveThumbUrl('img1', 2000)).toBe(
+      'https://drive.google.com/thumbnail?id=img1&sz=w2000'
     )
   })
 
