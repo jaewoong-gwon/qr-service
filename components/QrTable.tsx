@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import QRCode from 'react-qr-code'
+import { QrDisplay } from '@/components/QrDisplay'
 import type { QrCode } from '@/lib/types'
 
 interface QrTableProps {
@@ -14,6 +15,7 @@ export function QrTable({ items }: QrTableProps) {
   const router = useRouter()
 
   const [editingItem, setEditingItem] = useState<QrCode | null>(null)
+  const [downloadItem, setDownloadItem] = useState<QrCode | null>(null)
   const [newUrl, setNewUrl] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -98,6 +100,12 @@ export function QrTable({ items }: QrTableProps) {
                 <td className="p-3">
                   <div className="flex gap-2">
                     <button
+                      onClick={() => setDownloadItem(item)}
+                      className="px-3 py-1 text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 rounded transition-colors"
+                    >
+                      다운로드
+                    </button>
+                    <button
                       onClick={() => openEditModal(item)}
                       className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
                     >
@@ -116,6 +124,27 @@ export function QrTable({ items }: QrTableProps) {
           </tbody>
         </table>
       </div>
+
+      {downloadItem && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setDownloadItem(null)}
+        >
+          <div
+            className="bg-white rounded-lg p-6 w-full max-w-sm shadow-xl flex flex-col items-center gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-lg font-semibold self-start">{downloadItem.product_name}</h2>
+            <QrDisplay slug={downloadItem.slug} productName={downloadItem.product_name} />
+            <button
+              onClick={() => setDownloadItem(null)}
+              className="w-full px-4 py-2 text-sm rounded border hover:bg-gray-50 transition-colors"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
 
       {editingItem && (
         <div
