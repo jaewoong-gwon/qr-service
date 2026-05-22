@@ -72,53 +72,64 @@ export function QrTable({ items }: QrTableProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-3">
         {items.map((item) => (
           <div
             key={item.id}
-            className="bg-cream border border-gold/40 rounded-xl px-4 py-3.5 flex items-center gap-3.5"
+            className="bg-cream border border-gold/40 rounded-xl p-4"
           >
-            <button
-              onClick={() => setDownloadItem(item)}
-              aria-label={`${item.products?.name ?? item.slug} QR 코드 다운로드`}
-              className="w-12 h-12 bg-white border border-gold/30 rounded-lg flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity"
-              title="클릭하여 다운로드"
-            >
-              <QRCode value={`${baseUrl}/r/${item.slug}`} size={36} />
-            </button>
+            {/* Top: QR + metadata */}
+            <div className="flex gap-4">
+              {/* Left: QR thumbnail — clicking opens download modal */}
+              <button
+                onClick={() => setDownloadItem(item)}
+                aria-label={`${item.products?.name ?? item.slug} QR 코드 다운로드`}
+                className="p-2 bg-cream border border-gold/30 rounded-lg flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity"
+                title="클릭하여 다운로드"
+              >
+                <QRCode value={`${baseUrl}/r/${item.slug}`} size={80} fgColor="#3D2B1F" bgColor="#F5EFE0" />
+              </button>
 
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-brown-dark truncate">
-                {item.products?.name ?? '-'}
-              </p>
-              <p className="text-xs text-brown-light font-mono mt-0.5">
-                {item.slug} · {new Date(item.created_at).toLocaleDateString('ko-KR')}
-              </p>
+              {/* Right: metadata */}
+              <div className="flex-1 min-w-0 py-1">
+                <p className="text-base font-bold text-brown-dark truncate">
+                  {item.products?.name ?? '-'}
+                </p>
+                <div className="w-8 h-px bg-gold my-2" />
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs text-brown-light flex-shrink-0">생성일</span>
+                  <span className="text-sm text-brown-dark">
+                    {new Date(item.created_at).toLocaleDateString('ko-KR')}
+                  </span>
+                </div>
+                {/* 추후 통계 */}
+              </div>
             </div>
 
-            <div className="flex gap-1.5 flex-shrink-0">
+            {/* Bottom: action buttons */}
+            <div className="border-t border-gold/20 pt-2.5 mt-3 flex gap-2">
               <Link
                 href={`/r/${item.slug}`}
                 target="_blank"
-                className="text-[10px] px-2.5 py-1 rounded bg-cream-bg text-brown-light border border-gold/30 hover:bg-gold/10 transition-colors"
+                className="text-xs px-3 py-1.5 rounded bg-cream-bg text-brown-light border border-gold/30 hover:bg-gold/10 transition-colors"
               >
                 미리보기
               </Link>
               <button
                 onClick={() => setDownloadItem(item)}
-                className="text-[10px] px-2.5 py-1 rounded bg-gold/10 text-gold border border-gold/30 hover:bg-gold/20 transition-colors"
+                className="text-xs px-3 py-1.5 rounded bg-gold/10 text-gold border border-gold/30 hover:bg-gold/20 transition-colors"
               >
                 다운로드
               </button>
               <button
                 onClick={() => openEditModal(item)}
-                className="text-[10px] px-2.5 py-1 rounded bg-cream-bg text-brown-light border border-gold/30 hover:bg-gold/10 transition-colors"
+                className="text-xs px-3 py-1.5 rounded bg-cream-bg text-brown-light border border-gold/30 hover:bg-gold/10 transition-colors"
               >
                 URL 변경
               </button>
               <button
                 onClick={() => handleDelete(item)}
-                className="text-[10px] px-2.5 py-1 rounded bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-colors"
+                className="text-xs px-3 py-1.5 rounded bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-colors"
               >
                 삭제
               </button>
