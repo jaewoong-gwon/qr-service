@@ -93,7 +93,13 @@ export function QrTable({ items }: QrTableProps) {
                   {new Date(item.created_at).toLocaleDateString('ko-KR')}
                 </td>
                 <td className="p-3">
-                  <QRCode value={`${baseUrl}/r/${item.slug}`} size={64} />
+                  <button
+                    onClick={() => setDownloadItem(item)}
+                    className="cursor-pointer hover:opacity-70 transition-opacity"
+                    title="클릭하여 확대"
+                  >
+                    <QRCode value={`${baseUrl}/r/${item.slug}`} size={64} />
+                  </button>
                 </td>
                 <td className="p-3">
                   <div className="flex gap-2">
