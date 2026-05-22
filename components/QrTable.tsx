@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import QRCode from 'react-qr-code'
 import { QrDisplay } from '@/components/QrDisplay'
 import type { QrCodeWithProduct } from '@/lib/types'
@@ -96,6 +97,13 @@ export function QrTable({ items }: QrTableProps) {
                 </td>
                 <td className="p-3">
                   <div className="flex gap-2">
+                    <Link
+                      href={`/r/${item.slug}`}
+                      target="_blank"
+                      className="px-3 py-1 text-xs bg-green-50 text-green-600 hover:bg-green-100 rounded transition-colors"
+                    >
+                      미리보기
+                    </Link>
                     <button
                       onClick={() => setDownloadItem(item)}
                       className="px-3 py-1 text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 rounded transition-colors"
