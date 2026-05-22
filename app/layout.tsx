@@ -3,7 +3,7 @@ import { Noto_Serif_KR } from 'next/font/google'
 import './globals.css'
 
 const notoSerifKR = Noto_Serif_KR({
-  weight: ['400', '600', '700'],
+  weight: 'variable',
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-serif',

@@ -11,7 +11,7 @@
 }
 
 body {
-  font-family: var(--font-serif), 'Noto Serif KR', Georgia, serif;
-  background-color: #EEEAE0;
-  color: #3D2B1F;
+  font-family: var(--font-serif), Georgia, serif;
+  background-color: var(--color-cream-bg);
+  color: var(--color-brown-dark);
 }
