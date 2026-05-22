@@ -1,5 +1,13 @@
 import type { Metadata } from 'next'
+import { Noto_Serif_KR } from 'next/font/google'
 import './globals.css'
+
+const notoSerifKR = Noto_Serif_KR({
+  weight: ['400', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-serif',
+})
 
 export const metadata: Metadata = {
   title: 'QR Code Manager',
@@ -7,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={notoSerifKR.variable}>
       <body>{children}</body>
     </html>
   )
