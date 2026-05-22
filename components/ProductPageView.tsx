@@ -63,6 +63,7 @@ export function ProductPageView({ product, images }: ProductPageViewProps) {
             </div>
             {heroImage ? (
               <button
+                aria-label="제품 대표 이미지 크게 보기"
                 className="w-[130px] flex-shrink-0"
                 onClick={() => setSelectedImage(heroImage)}
               >
@@ -89,6 +90,7 @@ export function ProductPageView({ product, images }: ProductPageViewProps) {
               {images.map((img) => (
                 <button
                   key={img.id}
+                  aria-label={`갤러리 이미지 크게 보기`}
                   onClick={() => setSelectedImage(img)}
                   className="aspect-square overflow-hidden rounded-md border border-gold/20 hover:opacity-80 transition-opacity"
                 >

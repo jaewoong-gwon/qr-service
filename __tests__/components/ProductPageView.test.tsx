@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ProductPageView } from '@/components/ProductPageView'
 import type { Product } from '@/lib/types'
