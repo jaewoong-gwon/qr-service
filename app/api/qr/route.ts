@@ -41,6 +41,21 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (existingQr) {
+    if (!existingQr.products) {
+      const { data: product } = await supabase
+        .from('products')
+        .insert({
+          qr_code_id: existingQr.id,
+          name: name.trim(),
+          description: description ?? null,
+          price: price ?? null,
+          materials: materials ?? null,
+          dimensions: dimensions ?? null,
+        })
+        .select()
+        .single()
+      return NextResponse.json({ ...existingQr, products: product }, { status: 200 })
+    }
     return NextResponse.json(existingQr, { status: 200 })
   }
 

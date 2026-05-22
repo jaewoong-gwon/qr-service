@@ -81,7 +81,7 @@ export function ProductPageView({ product, images }: ProductPageViewProps) {
           onClick={() => setSelectedImage(null)}
         >
           <img
-            src={`https://drive.google.com/uc?id=${selectedImage.id}`}
+            src={selectedImage.webContentLink}
             alt={selectedImage.name}
             className="max-w-full max-h-full object-contain rounded"
             onClick={(e) => e.stopPropagation()}
