@@ -13,7 +13,7 @@ interface QrTableProps {
 }
 
 export function QrTable({ items }: QrTableProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? ''
   const router = useRouter()
 
   const [editingItem, setEditingItem] = useState<QrCodeWithProduct | null>(null)
@@ -26,7 +26,11 @@ export function QrTable({ items }: QrTableProps) {
     const productName = item.products?.name ?? item.slug
     if (!confirm(`"${productName}" QR 코드를 삭제하시겠습니까?`)) return
     const res = await fetch(`/api/qr/${item.id}`, { method: 'DELETE' })
-    if (res.ok) router.refresh()
+    if (res.ok) {
+      router.refresh()
+    } else {
+      alert('삭제에 실패했습니다. 다시 시도해 주세요.')
+    }
   }
 
   function openEditModal(item: QrCodeWithProduct) {
@@ -76,6 +80,7 @@ export function QrTable({ items }: QrTableProps) {
           >
             <button
               onClick={() => setDownloadItem(item)}
+              aria-label={`${item.products?.name ?? item.slug} QR 코드 다운로드`}
               className="w-12 h-12 bg-white border border-gold/30 rounded-lg flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity"
               title="클릭하여 다운로드"
             >
