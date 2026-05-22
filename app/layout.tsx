@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import { Noto_Serif_KR } from 'next/font/google'
+import { Gowun_Dodum } from 'next/font/google'
 import './globals.css'
 
-const notoSerifKR = Noto_Serif_KR({
-  weight: 'variable',
+const gowunDodum = Gowun_Dodum({
+  weight: '400',
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-serif',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className={notoSerifKR.variable}>
+    <html lang="ko" className={gowunDodum.variable}>
       <body>{children}</body>
     </html>
   )
