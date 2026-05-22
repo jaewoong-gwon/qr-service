@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { QrTable } from '@/components/QrTable'
 import { LogoutButton } from '@/components/LogoutButton'
-import type { QrCode } from '@/lib/types'
+import type { QrCodeWithProduct } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,7 +10,7 @@ export default async function DashboardPage() {
   const supabase = createServerSupabaseClient()
   const { data } = await supabase
     .from('qr_codes')
-    .select('*')
+    .select('*, products(*)')
     .order('created_at', { ascending: false })
 
   return (
@@ -27,7 +27,7 @@ export default async function DashboardPage() {
           <LogoutButton />
         </div>
       </div>
-      <QrTable items={(data as QrCode[]) ?? []} />
+      <QrTable items={(data as unknown as QrCodeWithProduct[]) ?? []} />
     </main>
   )
 }
