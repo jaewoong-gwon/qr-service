@@ -31,8 +31,12 @@ export function PhotoSection({ content }: { content: PhotoSectionContent }) {
 
       {lightbox && (
         <div
+          role="dialog"
+          aria-modal="true"
           className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
           onClick={() => setLightbox(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setLightbox(false) }}
+          tabIndex={-1}
         >
           <img
             src={driveThumbUrl(content.image_drive_id, 2000)}

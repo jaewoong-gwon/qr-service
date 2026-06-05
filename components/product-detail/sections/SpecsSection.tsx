@@ -2,6 +2,8 @@ import { driveThumbUrl } from '@/lib/drive'
 import type { SpecsContent } from '@/lib/types'
 
 export function SpecsSection({ content }: { content: SpecsContent }) {
+  if (content.items.length === 0) return null
+
   return (
     <section className="py-8 border-t border-gold/20">
       <div className="max-w-[480px] mx-auto px-4">
