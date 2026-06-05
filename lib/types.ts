@@ -89,10 +89,18 @@ export type SectionContent =
   | QuoteContent
   | PhotoSectionContent
 
-export interface ProductSection {
+type ProductSectionBase = {
   id: string
   product_id: string
-  section_type: SectionType
   display_order: number
-  content: SectionContent
+  created_at?: string
 }
+
+export type ProductSection =
+  | (ProductSectionBase & { section_type: 'hero';           content: HeroContent })
+  | (ProductSectionBase & { section_type: 'text_block';     content: TextBlockContent })
+  | (ProductSectionBase & { section_type: 'feature_cards';  content: FeatureCardsContent })
+  | (ProductSectionBase & { section_type: 'specs';          content: SpecsContent })
+  | (ProductSectionBase & { section_type: 'recommend_list'; content: RecommendListContent })
+  | (ProductSectionBase & { section_type: 'quote';          content: QuoteContent })
+  | (ProductSectionBase & { section_type: 'photo_section';  content: PhotoSectionContent })
