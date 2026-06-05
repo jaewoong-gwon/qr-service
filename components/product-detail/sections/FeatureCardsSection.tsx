@@ -7,10 +7,10 @@ export function FeatureCardsSection({ content }: { content: FeatureCardsContent 
   return (
     <section className="py-8 border-t border-gold/20">
       <div className="max-w-[480px] mx-auto px-4">
-        <h2 className="text-xl font-bold text-brown-dark text-center mb-4">
+        <h2 className="text-xl font-bold text-brown-dark text-center">
           {content.heading}
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mt-4">
           {content.cards.map((card, i) => (
             <div
               key={i}
