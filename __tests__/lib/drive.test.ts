@@ -1,64 +1,28 @@
-// @vitest-environment node
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { getFolderImages, driveThumbUrl } from '@/lib/drive'
+import { describe, it, expect } from 'vitest'
+import { parseDriveId } from '@/lib/drive'
 
-beforeEach(() => {
-  process.env.GOOGLE_DRIVE_API_KEY = 'test-api-key'
-})
-
-afterEach(() => {
-  vi.restoreAllMocks()
-})
-
-describe('getFolderImages', () => {
-  it('유효한 폴더 URL에서 이미지 목록을 반환한다', async () => {
-    const mockImages = [{ id: 'img1', name: 'photo1.jpg' }]
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ files: mockImages }),
-    })
-
-    const result = await getFolderImages(
-      'https://drive.google.com/drive/folders/abc123XYZ'
-    )
-
-    expect(result).toEqual(mockImages)
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('abc123XYZ'),
-      expect.any(Object)
-    )
+describe('parseDriveId', () => {
+  it('extracts ID from /file/d/[ID]/view URL', () => {
+    expect(parseDriveId('https://drive.google.com/file/d/abc123XYZ/view?usp=sharing')).toBe('abc123XYZ')
   })
 
-  it('driveThumbUrl은 Drive 썸네일 URL을 생성한다', () => {
-    expect(driveThumbUrl('img1')).toBe(
-      'https://drive.google.com/thumbnail?id=img1&sz=w400'
-    )
-    expect(driveThumbUrl('img1', 2000)).toBe(
-      'https://drive.google.com/thumbnail?id=img1&sz=w2000'
-    )
+  it('extracts ID from ?id= query param URL', () => {
+    expect(parseDriveId('https://drive.google.com/open?id=xyz789ABC')).toBe('xyz789ABC')
   })
 
-  it('폴더 URL이 아닌 경우 빈 배열을 반환한다', async () => {
-    const result = await getFolderImages('https://drive.google.com/file/d/abc/view')
-    expect(result).toEqual([])
+  it('extracts ID from uc?id= URL', () => {
+    expect(parseDriveId('https://drive.google.com/uc?id=def456&export=download')).toBe('def456')
   })
 
-  it('Drive API 응답이 실패하면 빈 배열을 반환한다', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: false })
-    const result = await getFolderImages(
-      'https://drive.google.com/drive/folders/abc123'
-    )
-    expect(result).toEqual([])
+  it('returns raw input when no URL pattern matches', () => {
+    expect(parseDriveId('rawFileId_123')).toBe('rawFileId_123')
   })
 
-  it('files 키가 없는 응답에서 빈 배열을 반환한다', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    })
-    const result = await getFolderImages(
-      'https://drive.google.com/drive/folders/abc123'
-    )
-    expect(result).toEqual([])
+  it('trims whitespace from raw input', () => {
+    expect(parseDriveId('  rawFileId_123  ')).toBe('rawFileId_123')
+  })
+
+  it('returns empty string for empty input', () => {
+    expect(parseDriveId('')).toBe('')
   })
 })

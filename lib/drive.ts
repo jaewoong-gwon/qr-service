@@ -3,6 +3,16 @@ export interface DriveImage {
   name: string
 }
 
+export function parseDriveId(input: string): string {
+  const fileMatch = input.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)
+  if (fileMatch) return fileMatch[1]
+
+  const idMatch = input.match(/[?&]id=([a-zA-Z0-9_-]+)/)
+  if (idMatch) return idMatch[1]
+
+  return input.trim()
+}
+
 export function driveThumbUrl(id: string, width = 400): string {
   return `https://drive.google.com/thumbnail?id=${id}&sz=w${width}`
 }
