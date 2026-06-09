@@ -28,12 +28,12 @@ test('invalid URL shows error', async ({ page }) => {
   await expect(page.getByText('유효한 Google Drive 링크가 아닙니다')).toBeVisible()
 })
 
-test('valid Drive folder URL creates QR SVG', async ({ page }) => {
+test('valid Drive folder URL creates QR and redirects to sections page', async ({ page }) => {
   await page.goto('/admin/qr/new')
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
   await page.getByLabel('Google Drive 폴더 URL').fill(TEST_DRIVE_FOLDER_URL)
   await page.getByRole('button', { name: 'QR 생성' }).click()
-  await expect(page.locator('svg').first()).toBeVisible()
+  await expect(page).toHaveURL(/\/admin\/qr\/.+\/sections/)
 })
 
 test('same Drive folder URL returns same slug', async ({ page }) => {
