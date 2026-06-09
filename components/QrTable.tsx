@@ -115,6 +115,12 @@ export function QrTable({ items }: QrTableProps) {
               >
                 미리보기
               </Link>
+              <Link
+                href={`/admin/qr/${item.id}/sections`}
+                className="text-xs px-3 py-1.5 rounded bg-cream-bg text-brown-light border border-gold/30 hover:bg-gold/10 transition-colors"
+              >
+                섹션
+              </Link>
               <button
                 onClick={() => setDownloadItem(item)}
                 className="text-xs px-3 py-1.5 rounded bg-gold/10 text-gold border border-gold/30 hover:bg-gold/20 transition-colors"
