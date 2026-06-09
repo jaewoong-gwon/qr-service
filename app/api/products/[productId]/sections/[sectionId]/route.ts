@@ -5,7 +5,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ productId: string; sectionId: string }> }
 ) {
-  const { sectionId } = await params
+  const { productId, sectionId } = await params
   const body = await request.json()
   const { content } = body
 
@@ -18,6 +18,7 @@ export async function PATCH(
     .from('product_sections')
     .update({ content })
     .eq('id', sectionId)
+    .eq('product_id', productId)
     .select()
     .single()
 
@@ -29,12 +30,13 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ productId: string; sectionId: string }> }
 ) {
-  const { sectionId } = await params
+  const { productId, sectionId } = await params
   const supabase = createServerSupabaseClient()
   const { error } = await supabase
     .from('product_sections')
     .delete()
     .eq('id', sectionId)
+    .eq('product_id', productId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return new NextResponse(null, { status: 204 })

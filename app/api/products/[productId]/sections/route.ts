@@ -26,7 +26,9 @@ export async function POST(
   const body = await request.json()
   const { section_type, display_order, content } = body
 
-  if (!section_type || content === undefined) {
+  const VALID_SECTION_TYPES = ['hero', 'text_block', 'feature_cards', 'specs', 'recommend_list', 'quote', 'photo_section']
+
+  if (!section_type || !VALID_SECTION_TYPES.includes(section_type) || content === undefined) {
     return NextResponse.json({ error: '필수 필드가 없습니다' }, { status: 400 })
   }
 

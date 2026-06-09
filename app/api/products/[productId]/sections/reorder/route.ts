@@ -13,11 +13,16 @@ export async function PATCH(
   }
 
   const supabase = createServerSupabaseClient()
-  await Promise.all(
+  const results = await Promise.all(
     sections.map(({ id, display_order }) =>
       supabase.from('product_sections').update({ display_order }).eq('id', id)
     )
   )
+
+  const failed = results.find(({ error }) => error)
+  if (failed?.error) {
+    return NextResponse.json({ error: failed.error.message }, { status: 500 })
+  }
 
   return new NextResponse(null, { status: 204 })
 }
