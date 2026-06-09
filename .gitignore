@@ -48,3 +48,8 @@ e2e/.auth/
 
 # Local scripts (contain secrets when run)
 scripts/
+
+# Claude Code & Superpowers (local tooling)
+.claude/
+.superpowers/
+docs/superpowers/

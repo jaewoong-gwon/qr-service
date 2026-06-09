@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { getFolderImages } from '@/lib/drive'
 import { ProductPageView } from '@/components/ProductPageView'
+import { ProductDetailView } from '@/components/product-detail/ProductDetailView'
+import type { ProductSection } from '@/lib/types'
 
 export default async function ProductPage({
   params,
@@ -25,7 +27,18 @@ export default async function ProductPage({
     .eq('qr_code_id', qrCode.id)
     .single()
 
-  const images = await getFolderImages(qrCode.drive_folder_url)
+  const { data: sectionsData } = await supabase
+    .from('product_sections')
+    .select('*')
+    .eq('product_id', product?.id ?? '')
+    .order('display_order', { ascending: true })
 
+  const sections = (sectionsData ?? []) as ProductSection[]
+
+  if (sections.length > 0) {
+    return <ProductDetailView sections={sections} />
+  }
+
+  const images = await getFolderImages(qrCode.drive_folder_url)
   return <ProductPageView product={product ?? null} images={images} />
 }
