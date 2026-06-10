@@ -13,6 +13,12 @@ export function parseDriveId(input: string): string {
   return input.trim()
 }
 
+export function parseFolderUrl(input: string): string {
+  const folderMatch = input.match(/\/folders\/([a-zA-Z0-9_-]+)/)
+  if (folderMatch) return folderMatch[1]
+  return input.trim()
+}
+
 export function driveThumbUrl(id: string, width = 400): string {
   return `https://drive.google.com/thumbnail?id=${id}&sz=w${width}`
 }

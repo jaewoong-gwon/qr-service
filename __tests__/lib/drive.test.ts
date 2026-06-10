@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseDriveId } from '@/lib/drive'
+import { parseDriveId, parseFolderUrl } from '@/lib/drive'
 
 describe('parseDriveId', () => {
   it('extracts ID from /file/d/[ID]/view URL', () => {
@@ -24,5 +24,27 @@ describe('parseDriveId', () => {
 
   it('returns empty string for empty input', () => {
     expect(parseDriveId('')).toBe('')
+  })
+})
+
+describe('parseFolderUrl', () => {
+  it('표준 Drive 폴더 URL에서 폴더 ID를 추출한다', () => {
+    expect(parseFolderUrl('https://drive.google.com/drive/folders/abc123XYZ')).toBe('abc123XYZ')
+  })
+
+  it('공유 링크 URL에서 폴더 ID를 추출한다 (?usp=sharing)', () => {
+    expect(parseFolderUrl('https://drive.google.com/drive/folders/abc123XYZ?usp=sharing')).toBe('abc123XYZ')
+  })
+
+  it('trailing slash가 있어도 폴더 ID를 추출한다', () => {
+    expect(parseFolderUrl('https://drive.google.com/drive/folders/abc123XYZ/')).toBe('abc123XYZ')
+  })
+
+  it('/folders/ 패턴이 없으면 입력값을 그대로 반환한다', () => {
+    expect(parseFolderUrl('https://drive.google.com/file/d/abc123/view')).toBe('https://drive.google.com/file/d/abc123/view')
+  })
+
+  it('매칭 없는 입력의 공백을 trim한다', () => {
+    expect(parseFolderUrl('  rawFolderId  ')).toBe('rawFolderId')
   })
 })
