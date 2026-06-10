@@ -46,4 +46,10 @@ describe('QrTable', () => {
     expect(screen.getByRole('button', { name: 'URL 변경' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '삭제' })).toBeInTheDocument()
   })
+
+  it('renders 섹션 link button for each item', () => {
+    render(<QrTable items={[mockItem]} />)
+    const sectionsLink = screen.getByRole('link', { name: '섹션' })
+    expect(sectionsLink).toHaveAttribute('href', '/admin/qr/1/sections')
+  })
 })

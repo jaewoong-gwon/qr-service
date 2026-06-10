@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
+import { parseFolderUrl } from '@/lib/drive'
 
 export async function DELETE(
   _request: NextRequest,
@@ -28,7 +29,11 @@ export async function PATCH(
   const supabase = createServerSupabaseClient()
 
   if (drive_folder_url !== undefined) {
-    if (!drive_folder_url?.startsWith('https://drive.google.com/')) {
+    const folderId = parseFolderUrl(drive_folder_url ?? '')
+    if (
+      !drive_folder_url?.startsWith('https://drive.google.com/') ||
+      folderId === drive_folder_url.trim()
+    ) {
       return NextResponse.json(
         { error: '유효한 Google Drive 링크가 아닙니다' },
         { status: 400 }

@@ -1,27 +1,22 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { GoldBorderCard } from '@/components/GoldBorderCard'
-import { QrDisplay } from '@/components/QrDisplay'
-import type { QrCode } from '@/lib/types'
-
-interface CreateResult extends QrCode {
-  products: { id: string; name: string } | null
-}
 
 const inputClass =
   'w-full bg-white border border-gold/40 rounded-lg px-3.5 py-2.5 text-sm text-brown-dark focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20'
 const labelClass = 'block text-sm font-bold text-brown-dark mb-1.5'
 
 export default function NewQrPage() {
+  const router = useRouter()
   const [name, setName] = useState('')
   const [driveUrl, setDriveUrl] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
   const [materials, setMaterials] = useState('')
   const [dimensions, setDimensions] = useState('')
-  const [result, setResult] = useState<CreateResult | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -29,7 +24,6 @@ export default function NewQrPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setResult(null)
 
     const res = await fetch('/api/qr', {
       method: 'POST',
@@ -46,11 +40,11 @@ export default function NewQrPage() {
 
     const data = await res.json()
     if (res.ok) {
-      setResult(data)
+      router.push(`/admin/qr/${data.id}/sections`)
     } else {
       setError(data.error)
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
@@ -185,18 +179,6 @@ export default function NewQrPage() {
             </div>
           </GoldBorderCard>
         </form>
-
-        {result && (
-          <div className="mt-6">
-            <GoldBorderCard className="p-6 flex flex-col items-center gap-4">
-              <h2 className="text-base font-bold text-brown-dark self-start">생성된 QR 코드</h2>
-              <QrDisplay
-                slug={result.slug}
-                productName={result.products?.name ?? ''}
-              />
-            </GoldBorderCard>
-          </div>
-        )}
       </main>
     </div>
   )

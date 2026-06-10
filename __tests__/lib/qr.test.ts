@@ -18,4 +18,16 @@ describe('computeSlug', () => {
     const b = await computeSlug('https://drive.google.com/file/d/bbb/view')
     expect(a).not.toBe(b)
   })
+
+  it('URL 파라미터가 달라도 동일 폴더면 동일 slug를 반환한다', async () => {
+    const slug1 = await computeSlug('https://drive.google.com/drive/folders/abc123XYZ')
+    const slug2 = await computeSlug('https://drive.google.com/drive/folders/abc123XYZ?usp=sharing')
+    expect(slug1).toBe(slug2)
+  })
+
+  it('trailing slash가 있어도 동일 slug를 반환한다', async () => {
+    const slug1 = await computeSlug('https://drive.google.com/drive/folders/abc123XYZ')
+    const slug2 = await computeSlug('https://drive.google.com/drive/folders/abc123XYZ/')
+    expect(slug1).toBe(slug2)
+  })
 })
