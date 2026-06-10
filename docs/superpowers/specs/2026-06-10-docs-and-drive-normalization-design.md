@@ -91,12 +91,14 @@ export async function computeSlug(driveUrl: string): Promise<string> {
 #### `app/api/qr/route.ts` — 유효성 검증 강화
 
 현재: `drive_folder_url.startsWith('https://drive.google.com/')`
-변경: `parseFolderUrl(drive_folder_url)` 결과가 원본과 다른지 확인
+변경: Drive 도메인 확인 후 폴더 패턴 매칭으로 강화
 
 ```ts
 const folderId = parseFolderUrl(drive_folder_url)
-if (!folderId || folderId === drive_folder_url) {
-  return NextResponse.json({ error: '유효한 Google Drive 폴더 링크가 아닙니다' }, { status: 400 })
+// parseFolderUrl returns input.trim() if no /folders/ pattern found
+const isValidFolderUrl = folderId !== drive_folder_url.trim()
+if (!drive_folder_url?.startsWith('https://drive.google.com/') || !isValidFolderUrl) {
+  return NextResponse.json({ error: '유효한 Google Drive 링크가 아닙니다' }, { status: 400 })
 }
 ```
 
