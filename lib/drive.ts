@@ -24,9 +24,8 @@ export function driveThumbUrl(id: string, width = 400): string {
 }
 
 export async function getFolderImages(folderUrl: string): Promise<DriveImage[]> {
-  const match = folderUrl.match(/folders\/([a-zA-Z0-9_-]+)/)
-  if (!match) return []
-  const folderId = match[1]
+  const folderId = parseFolderUrl(folderUrl)
+  if (folderId === folderUrl.trim()) return []
 
   const res = await fetch(
     `https://www.googleapis.com/drive/v3/files` +
