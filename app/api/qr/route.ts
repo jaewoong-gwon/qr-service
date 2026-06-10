@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { computeSlug } from '@/lib/qr'
+import { parseFolderUrl } from '@/lib/drive'
 
 export async function GET() {
   const supabase = createServerSupabaseClient()
@@ -20,7 +21,11 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const { drive_folder_url, name, description, price, materials, dimensions } = body
 
-  if (!drive_folder_url?.startsWith('https://drive.google.com/')) {
+  const folderId = parseFolderUrl(drive_folder_url ?? '')
+  if (
+    !drive_folder_url?.startsWith('https://drive.google.com/') ||
+    folderId === drive_folder_url.trim()
+  ) {
     return NextResponse.json(
       { error: '유효한 Google Drive 링크가 아닙니다' },
       { status: 400 }
