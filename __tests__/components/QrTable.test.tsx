@@ -42,13 +42,9 @@ describe('QrTable', () => {
   it('renders action buttons', () => {
     render(<QrTable items={[mockItem]} />)
     expect(screen.getByRole('link', { name: '미리보기' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'URL 변경' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '다운로드' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '삭제' })).toBeInTheDocument()
-  })
-
-  it('renders 섹션 link button for each item', () => {
-    render(<QrTable items={[mockItem]} />)
-    const sectionsLink = screen.getByRole('link', { name: '섹션' })
-    expect(sectionsLink).toHaveAttribute('href', '/admin/qr/1/sections')
+    expect(screen.queryByRole('button', { name: 'URL 변경' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: '섹션' })).not.toBeInTheDocument()
   })
 })
