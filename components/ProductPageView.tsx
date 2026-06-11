@@ -39,27 +39,6 @@ export function ProductPageView({ product, images }: ProductPageViewProps) {
               {product.description && (
                 <p className="text-sm text-brown-mid leading-relaxed mb-3">{product.description}</p>
               )}
-              {product.price && (
-                <p className="text-xl font-bold text-brown-dark">{product.price}</p>
-              )}
-              {(product.materials || product.dimensions) && (
-                <table className="w-full text-sm mt-3">
-                  <tbody>
-                    {product.materials && (
-                      <tr className="border-t border-gold/20">
-                        <th className="py-1.5 pr-3 text-left text-brown-light font-normal w-14">소재</th>
-                        <td className="py-1.5 text-brown-dark">{product.materials}</td>
-                      </tr>
-                    )}
-                    {product.dimensions && (
-                      <tr className="border-t border-gold/20">
-                        <th className="py-1.5 pr-3 text-left text-brown-light font-normal w-14">크기</th>
-                        <td className="py-1.5 text-brown-dark">{product.dimensions}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              )}
             </div>
             {heroImage ? (
               <button

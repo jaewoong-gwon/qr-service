@@ -9,9 +9,8 @@ const product: Product = {
   qr_code_id: 'qr1',
   name: '레진 갓 키링',
   description: '전통 키링',
-  price: '27,000원',
-  materials: '레진',
-  dimensions: '4.5cm',
+  idus_url: null,
+  purchase_notes: null,
 }
 
 describe('ProductPageView', () => {

@@ -19,7 +19,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
-  const { drive_folder_url, name, description, price, materials, dimensions } = body
+  const { drive_folder_url, name, description, idus_url, purchase_notes } = body
 
   const folderId = parseFolderUrl(drive_folder_url ?? '')
   if (
@@ -53,9 +53,8 @@ export async function POST(request: NextRequest) {
           qr_code_id: existingQr.id,
           name: name.trim(),
           description: description ?? null,
-          price: price ?? null,
-          materials: materials ?? null,
-          dimensions: dimensions ?? null,
+          idus_url: idus_url ?? null,
+          purchase_notes: purchase_notes ?? null,
         })
         .select()
         .single()
@@ -80,9 +79,8 @@ export async function POST(request: NextRequest) {
       qr_code_id: qrCode.id,
       name: name.trim(),
       description: description ?? null,
-      price: price ?? null,
-      materials: materials ?? null,
-      dimensions: dimensions ?? null,
+      idus_url: idus_url ?? null,
+      purchase_notes: purchase_notes ?? null,
     })
     .select()
     .single()

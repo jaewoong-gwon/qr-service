@@ -10,9 +10,8 @@ export interface Product {
   qr_code_id: string
   name: string
   description: string | null
-  price: string | null
-  materials: string | null
-  dimensions: string | null
+  idus_url: string | null
+  purchase_notes: string | null
 }
 
 export interface QrCodeWithProduct extends QrCode {

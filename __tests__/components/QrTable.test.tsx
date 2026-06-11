@@ -23,9 +23,8 @@ const mockItem: QrCodeWithProduct = {
     qr_code_id: '1',
     name: '레진 갓 키링',
     description: null,
-    price: null,
-    materials: null,
-    dimensions: null,
+    idus_url: null,
+    purchase_notes: null,
   },
 }
 
