@@ -14,9 +14,8 @@ export default function NewQrPage() {
   const [name, setName] = useState('')
   const [driveUrl, setDriveUrl] = useState('')
   const [description, setDescription] = useState('')
-  const [price, setPrice] = useState('')
-  const [materials, setMaterials] = useState('')
-  const [dimensions, setDimensions] = useState('')
+  const [idusUrl, setIdusUrl] = useState('')
+  const [purchaseNotes, setPurchaseNotes] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -32,9 +31,8 @@ export default function NewQrPage() {
         name,
         drive_folder_url: driveUrl,
         description: description || null,
-        price: price || null,
-        materials: materials || null,
-        dimensions: dimensions || null,
+        idus_url: idusUrl || null,
+        purchase_notes: purchaseNotes || null,
       }),
     })
 
@@ -101,61 +99,57 @@ export default function NewQrPage() {
                     className={inputClass}
                     required
                   />
-                  <p className="text-[11px] text-brown-muted mt-1.5">
-                    QR 코드 URL(slug)이 제품명 기반으로 자동 생성됩니다.
-                  </p>
                 </div>
 
                 <div>
                   <label htmlFor="description" className={labelClass}>
-                    설명 <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
+                    작품 소개 <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
                   </label>
                   <textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
+                    placeholder="어떤 작품인지 2-3줄로 소개해주세요"
                     className={`${inputClass} resize-none`}
                   />
                 </div>
+              </div>
+            </section>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="price" className={labelClass}>
-                      가격 <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
-                    </label>
-                    <input
-                      id="price"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      placeholder="27,000원"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="materials" className={labelClass}>
-                      소재 <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
-                    </label>
-                    <input
-                      id="materials"
-                      value={materials}
-                      onChange={(e) => setMaterials(e.target.value)}
-                      placeholder="레진, 메탈"
-                      className={inputClass}
-                    />
-                  </div>
+            <section className="px-6 py-6 border-t border-gold/20">
+              <p className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-5">랜딩 페이지</p>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label htmlFor="idus-url" className={labelClass}>
+                    아이디어스 구매 링크{' '}
+                    <span className="text-[11px] text-brown-muted font-normal">(권장)</span>
+                  </label>
+                  <input
+                    id="idus-url"
+                    type="url"
+                    value={idusUrl}
+                    onChange={(e) => setIdusUrl(e.target.value)}
+                    placeholder="https://www.idus.com/v2/product/..."
+                    className={inputClass}
+                  />
+                  <p className="text-[11px] text-brown-muted mt-1.5">
+                    없으면 구매 버튼이 노출되지 않습니다.
+                  </p>
                 </div>
 
                 <div>
-                  <label htmlFor="dimensions" className={labelClass}>
-                    크기 <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
+                  <label htmlFor="purchase-notes" className={labelClass}>
+                    구매 전 확인사항{' '}
+                    <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
                   </label>
-                  <input
-                    id="dimensions"
-                    value={dimensions}
-                    onChange={(e) => setDimensions(e.target.value)}
-                    placeholder="4.5 × 3.2 cm"
-                    className={inputClass}
+                  <textarea
+                    id="purchase-notes"
+                    value={purchaseNotes}
+                    onChange={(e) => setPurchaseNotes(e.target.value)}
+                    rows={4}
+                    placeholder="핸드메이드 제품으로 색상·크기에 차이가 있을 수 있습니다."
+                    className={`${inputClass} resize-none`}
                   />
                 </div>
               </div>
