@@ -10,14 +10,13 @@ test('can access /admin/qr/new when authenticated', async ({ page }) => {
   await expect(page.getByRole('heading', { name: '새 QR 코드 생성' })).toBeVisible()
 })
 
-test('QR creation form has product detail fields', async ({ page }) => {
+test('QR creation form has correct fields', async ({ page }) => {
   await page.goto('/admin/qr/new')
   await expect(page.getByLabel('제품명')).toBeVisible()
   await expect(page.getByLabel('Google Drive 폴더 URL')).toBeVisible()
-  await expect(page.getByLabel('설명', { exact: false })).toBeVisible()
-  await expect(page.getByLabel('가격', { exact: false })).toBeVisible()
-  await expect(page.getByLabel('소재', { exact: false })).toBeVisible()
-  await expect(page.getByLabel('크기', { exact: false })).toBeVisible()
+  await expect(page.getByLabel('작품 소개', { exact: false })).toBeVisible()
+  await expect(page.getByLabel('아이디어스 구매 링크', { exact: false })).toBeVisible()
+  await expect(page.getByLabel('구매 전 확인사항', { exact: false })).toBeVisible()
 })
 
 test('invalid URL shows error', async ({ page }) => {
@@ -53,7 +52,7 @@ test('same Drive folder URL returns same slug', async ({ page }) => {
   expect(data1.id).toBe(data2.id)
 })
 
-test('/r/{slug} shows product landing page', async ({ page }) => {
+test('/r/{slug} shows product name', async ({ page }) => {
   const createRes = await page.request.post('/api/qr', {
     data: { name: TEST_PRODUCT_NAME, drive_folder_url: TEST_DRIVE_FOLDER_URL },
   })
@@ -61,4 +60,23 @@ test('/r/{slug} shows product landing page', async ({ page }) => {
 
   await page.goto(`/r/${slug}`)
   await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
+})
+
+test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ page }) => {
+  const createRes = await page.request.post('/api/qr', {
+    data: {
+      name: TEST_PRODUCT_NAME,
+      drive_folder_url: TEST_DRIVE_FOLDER_URL,
+      idus_url: 'https://www.idus.com/v2/product/e2e-test-id',
+      purchase_notes: 'E2E 테스트 확인사항',
+    },
+  })
+  const { slug } = await createRes.json()
+
+  await page.goto(`/r/${slug}`)
+  await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
+  const link = page.getByRole('link', { name: /아이디어스에서 구매하기/ })
+  await expect(link).toBeVisible()
+  await expect(link).toHaveAttribute('href', 'https://www.idus.com/v2/product/e2e-test-id')
+  await expect(page.getByText('E2E 테스트 확인사항')).toBeVisible()
 })
