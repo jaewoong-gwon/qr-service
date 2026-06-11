@@ -38,7 +38,7 @@ export default function NewQrPage() {
 
     const data = await res.json()
     if (res.ok) {
-      router.push(`/admin/qr/${data.id}/sections`)
+      router.push('/admin/dashboard')
     } else {
       setError(data.error)
       setLoading(false)

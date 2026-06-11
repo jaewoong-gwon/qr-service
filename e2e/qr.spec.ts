@@ -29,23 +29,14 @@ test('invalid URL shows error', async ({ page }) => {
   await expect(page.getByText('유효한 Google Drive 링크가 아닙니다')).toBeVisible()
 })
 
-test('valid Drive folder URL creates QR and redirects to sections page', async ({ page }) => {
+test('valid Drive folder URL creates QR and redirects to dashboard', async ({ page }) => {
   const uniqueUrl = `https://drive.google.com/drive/folders/e2e-new-${Date.now()}`
-  let createdId: string | undefined
 
   await page.goto('/admin/qr/new')
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
   await page.getByLabel('Google Drive 폴더 URL').fill(uniqueUrl)
   await page.getByRole('button', { name: 'QR 생성' }).click()
-  await expect(page).toHaveURL(/\/admin\/qr\/.+\/sections/)
-
-  // Extract ID from redirect URL for cleanup
-  const match = page.url().match(/\/admin\/qr\/([^/]+)\/sections/)
-  if (match) createdId = match[1]
-
-  if (createdId) {
-    await page.request.delete(`/api/qr/${createdId}`)
-  }
+  await expect(page).toHaveURL('/admin/dashboard')
 })
 
 test('same Drive folder URL returns same slug', async ({ page }) => {
