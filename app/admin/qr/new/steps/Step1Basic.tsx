@@ -55,7 +55,7 @@ export function Step1Basic({ data, onChange }: Step1Props) {
       </div>
       <div>
         <label htmlFor="step1-subtitle" className={labelClass}>
-          한 줄 카피 <span className={hintClass}>(선택 · 제품명 위에 표시)</span>
+          한 줄 카피 <span className={hintClass}>(선택 · 상단에 표시)</span>
         </label>
         <input
           id="step1-subtitle"

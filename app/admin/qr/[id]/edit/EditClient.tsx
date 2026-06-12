@@ -156,7 +156,7 @@ export function EditClient({ item, images, allNoticeGroups }: EditClientProps) {
                 </div>
                 <div>
                   <label className={labelClass}>
-                    한 줄 카피 <span className={hintClass}>(제품명 위에 표시)</span>
+                    한 줄 카피 <span className={hintClass}>(상단에 표시)</span>
                   </label>
                   <input
                     value={subtitle}
