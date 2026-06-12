@@ -40,10 +40,10 @@ export async function POST(request: NextRequest) {
     subtitle,
     summary,
     idus_url,
-    tags = [] as TagInput[],
-    sections = [] as SectionInput[],
-    notice = null as NoticeInput | null,
   } = requestBody
+  const tags: TagInput[] = requestBody.tags ?? []
+  const sections: SectionInput[] = requestBody.sections ?? []
+  const notice: NoticeInput | null = requestBody.notice ?? null
 
   const folderId = parseFolderUrl(drive_folder_url ?? '')
   if (
@@ -111,9 +111,12 @@ export async function POST(request: NextRequest) {
     }
     noticeGroupId = group.id
     if (notice.new_group.items.length > 0) {
-      await supabase.from('notice_group_items').insert(
-        notice.new_group.items.map((item) => ({ ...item, notice_group_id: group.id }))
+      const { error: noticeItemsError } = await supabase.from('notice_group_items').insert(
+        notice.new_group.items.map((item: { content: string; sort_order: number }) => ({ ...item, notice_group_id: group.id }))
       )
+      if (noticeItemsError) {
+        return NextResponse.json({ error: noticeItemsError.message ?? '공지 항목 생성 실패' }, { status: 500 })
+      }
     }
   } else if (notice?.group_id) {
     noticeGroupId = notice.group_id
@@ -140,9 +143,12 @@ export async function POST(request: NextRequest) {
 
   // 3. Insert tags
   if (tags.length > 0) {
-    await supabase.from('product_tags').insert(
+    const { error: tagsError } = await supabase.from('product_tags').insert(
       tags.map((t) => ({ label: t.label, sort_order: t.sort_order, product_id: product.id }))
     )
+    if (tagsError) {
+      return NextResponse.json({ error: tagsError.message ?? '태그 생성 실패' }, { status: 500 })
+    }
   }
 
   // 4. Insert sections + items
@@ -153,11 +159,16 @@ export async function POST(request: NextRequest) {
       .insert({ ...sectionData, product_id: product.id })
       .select()
       .single()
-    if (secError || !sec) continue
+    if (secError || !sec) {
+      return NextResponse.json({ error: secError?.message ?? '섹션 생성 실패' }, { status: 500 })
+    }
     if (items.length > 0) {
-      await supabase.from('product_section_items').insert(
-        items.map((item) => ({ ...item, section_id: sec.id }))
+      const { error: itemsError } = await supabase.from('product_section_items').insert(
+        items.map((item: ItemInput) => ({ ...item, section_id: sec.id }))
       )
+      if (itemsError) {
+        return NextResponse.json({ error: itemsError.message ?? '섹션 아이템 생성 실패' }, { status: 500 })
+      }
     }
   }
 
