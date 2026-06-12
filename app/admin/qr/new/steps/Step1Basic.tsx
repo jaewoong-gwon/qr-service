@@ -26,10 +26,11 @@ export function Step1Basic({ data, onChange }: Step1Props) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <label className={labelClass}>
+        <label htmlFor="step1-drive-url" className={labelClass}>
           Google Drive 폴더 URL <span className="text-gold">*</span>
         </label>
         <input
+          id="step1-drive-url"
           type="url"
           value={data.driveUrl}
           onChange={(e) => set('driveUrl', e.target.value)}
@@ -40,10 +41,11 @@ export function Step1Basic({ data, onChange }: Step1Props) {
         <p className={`mt-1.5 ${hintClass}`}>사진이 저장된 공개 Google Drive 폴더 주소를 입력하세요.</p>
       </div>
       <div>
-        <label className={labelClass}>
+        <label htmlFor="step1-name" className={labelClass}>
           제품명 <span className="text-gold">*</span>
         </label>
         <input
+          id="step1-name"
           value={data.name}
           onChange={(e) => set('name', e.target.value)}
           placeholder="레진 갓 키링"
@@ -52,10 +54,11 @@ export function Step1Basic({ data, onChange }: Step1Props) {
         />
       </div>
       <div>
-        <label className={labelClass}>
+        <label htmlFor="step1-subtitle" className={labelClass}>
           한 줄 카피 <span className={hintClass}>(선택 · 제품명 위에 표시)</span>
         </label>
         <input
+          id="step1-subtitle"
           value={data.subtitle}
           onChange={(e) => set('subtitle', e.target.value)}
           placeholder="전통의 아름다움을 일상 속에"
@@ -63,10 +66,11 @@ export function Step1Basic({ data, onChange }: Step1Props) {
         />
       </div>
       <div>
-        <label className={labelClass}>
+        <label htmlFor="step1-summary" className={labelClass}>
           요약 <span className={hintClass}>(선택 · hero 하단)</span>
         </label>
         <textarea
+          id="step1-summary"
           value={data.summary}
           onChange={(e) => set('summary', e.target.value)}
           rows={2}
@@ -75,10 +79,11 @@ export function Step1Basic({ data, onChange }: Step1Props) {
         />
       </div>
       <div>
-        <label className={labelClass}>
+        <label htmlFor="step1-idus-url" className={labelClass}>
           아이디어스 구매 링크 <span className={hintClass}>(권장)</span>
         </label>
         <input
+          id="step1-idus-url"
           type="url"
           value={data.idusUrl}
           onChange={(e) => set('idusUrl', e.target.value)}

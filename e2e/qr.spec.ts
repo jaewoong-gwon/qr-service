@@ -83,7 +83,7 @@ test('/r/{slug} shows product name', async ({ page }) => {
   await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
 
   // Assert purchase button is absent when idus_url is not provided
-  await expect(page.getByRole('link', { name: /아이디어스에서 구매하기/ })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })).toHaveCount(0)
 
   if (id) {
     await page.request.delete(`/api/qr/${id}`)
@@ -104,7 +104,7 @@ test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ 
 
   await page.goto(`/r/${slug}`)
   await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
-  const link = page.getByRole('link', { name: /아이디어스에서 구매하기/ })
+  const link = page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })
   await expect(link).toBeVisible()
   await expect(link).toHaveAttribute('href', 'https://www.idus.com/v2/product/e2e-test-id')
 
