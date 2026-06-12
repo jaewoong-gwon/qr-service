@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase'
+import { getFolderImages } from '@/lib/drive'
 import { ProductLandingPage } from '@/components/ProductLandingPage'
+import type { QrCodeWithProduct } from '@/lib/types'
 
 export default async function ProductPage({
   params,
@@ -12,17 +14,25 @@ export default async function ProductPage({
 
   const { data: qrCode } = await supabase
     .from('qr_codes')
-    .select('*')
+    .select(`
+      *,
+      products (
+        *,
+        product_tags ( label, sort_order ),
+        notice_groups ( notice_group_items ( content, sort_order ) ),
+        product_sections (
+          *,
+          product_section_items ( title, description, sort_order )
+        )
+      )
+    `)
     .eq('slug', slug)
     .single()
 
   if (!qrCode) notFound()
 
-  const { data: product } = await supabase
-    .from('products')
-    .select('*')
-    .eq('qr_code_id', qrCode.id)
-    .single()
+  const item = qrCode as unknown as QrCodeWithProduct
+  const images = await getFolderImages(item.drive_folder_url)
 
-  return <ProductLandingPage product={product ?? null} />
+  return <ProductLandingPage product={item.products} images={images} />
 }
