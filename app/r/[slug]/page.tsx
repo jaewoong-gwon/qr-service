@@ -12,7 +12,7 @@ export default async function ProductPage({
   const { slug } = await params
   const supabase = createServerSupabaseClient()
 
-  const { data: qrCode } = await supabase
+  const { data: qrCode, error } = await supabase
     .from('qr_codes')
     .select(`
       *,
@@ -29,6 +29,7 @@ export default async function ProductPage({
     .eq('slug', slug)
     .single()
 
+  if (error && error.code !== 'PGRST116') throw new Error(error.message)
   if (!qrCode) notFound()
 
   const item = qrCode as unknown as QrCodeWithProduct

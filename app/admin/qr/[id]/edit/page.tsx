@@ -13,7 +13,7 @@ export default async function EditPage({
   const { id } = await params
   const supabase = createServerSupabaseClient()
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('qr_codes')
     .select(`
       *,
@@ -30,6 +30,7 @@ export default async function EditPage({
     .eq('id', id)
     .single()
 
+  if (error && error.code !== 'PGRST116') throw new Error(error.message)
   if (!data) notFound()
 
   const item = data as unknown as QrCodeWithProduct
