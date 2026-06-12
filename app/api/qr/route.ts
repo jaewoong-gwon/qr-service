@@ -19,7 +19,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const requestBody = await request.json()
-  const { drive_folder_url, name, description, idus_url, purchase_notes, keywords, body, quote } = requestBody
+  const { drive_folder_url, name, subtitle, summary, idus_url } = requestBody
 
   const folderId = parseFolderUrl(drive_folder_url ?? '')
   if (
@@ -52,12 +52,10 @@ export async function POST(request: NextRequest) {
         .insert({
           qr_code_id: existingQr.id,
           name: name.trim(),
-          description: description ?? null,
+          subtitle: subtitle ?? null,
+          summary: summary ?? null,
           idus_url: idus_url ?? null,
-          purchase_notes: purchase_notes ?? null,
-          keywords: keywords ?? null,
-          body: body ?? null,
-          quote: quote ?? null,
+          is_active: true,
         })
         .select()
         .single()
@@ -81,12 +79,10 @@ export async function POST(request: NextRequest) {
     .insert({
       qr_code_id: qrCode.id,
       name: name.trim(),
-      description: description ?? null,
+      subtitle: subtitle ?? null,
+      summary: summary ?? null,
       idus_url: idus_url ?? null,
-      purchase_notes: purchase_notes ?? null,
-      keywords: keywords ?? null,
-      body: body ?? null,
-      quote: quote ?? null,
+      is_active: true,
     })
     .select()
     .single()
