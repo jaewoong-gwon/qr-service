@@ -8,20 +8,25 @@ export interface QrCode {
 }
 
 export interface NoticeGroupItem {
+  id?: string
   content: string
   sort_order: number
 }
 
 export interface NoticeGroup {
+  id?: string
+  name?: string
   notice_group_items: NoticeGroupItem[]
 }
 
 export interface ProductTag {
+  id?: string
   label: string
   sort_order: number
 }
 
 export interface ProductSectionItem {
+  id?: string
   title: string | null
   description: string | null
   sort_order: number
@@ -55,7 +60,6 @@ export interface Product {
   idus_url: string | null
   is_active: boolean
   notice_group_id?: string | null
-  // Optional: populated only by nested select queries (landing page, edit page)
   product_tags?: ProductTag[]
   notice_groups?: NoticeGroup | null
   product_sections?: ProductSection[]
