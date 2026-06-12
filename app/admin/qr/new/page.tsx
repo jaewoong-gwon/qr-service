@@ -14,6 +14,9 @@ export default function NewQrPage() {
   const [name, setName] = useState('')
   const [driveUrl, setDriveUrl] = useState('')
   const [description, setDescription] = useState('')
+  const [keywords, setKeywords] = useState('')
+  const [body, setBody] = useState('')
+  const [quote, setQuote] = useState('')
   const [idusUrl, setIdusUrl] = useState('')
   const [purchaseNotes, setPurchaseNotes] = useState('')
   const [error, setError] = useState('')
@@ -30,7 +33,10 @@ export default function NewQrPage() {
       body: JSON.stringify({
         name,
         drive_folder_url: driveUrl,
-        description: description || null,
+        description: description.trim() || null,
+        keywords: keywords.trim() || null,
+        body: body.trim() || null,
+        quote: quote.trim() || null,
         idus_url: idusUrl || null,
         purchase_notes: purchaseNotes || null,
       }),
@@ -103,15 +109,29 @@ export default function NewQrPage() {
 
                 <div>
                   <label htmlFor="description" className={labelClass}>
-                    작품 소개 <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
+                    한 줄 카피{' '}
+                    <span className="text-[11px] text-brown-muted font-normal">(선택 · 제품명 위에 표시)</span>
                   </label>
-                  <textarea
+                  <input
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    rows={3}
-                    placeholder="어떤 작품인지 2-3줄로 소개해주세요"
-                    className={`${inputClass} resize-none`}
+                    placeholder="전통의 아름다움을 일상 속에"
+                    className={inputClass}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="keywords" className={labelClass}>
+                    키워드{' '}
+                    <span className="text-[11px] text-brown-muted font-normal">(선택 · 쉼표로 구분)</span>
+                  </label>
+                  <input
+                    id="keywords"
+                    value={keywords}
+                    onChange={(e) => setKeywords(e.target.value)}
+                    placeholder="전통 소품,핸드메이드,선물 추천"
+                    className={inputClass}
                   />
                 </div>
               </div>
@@ -120,6 +140,35 @@ export default function NewQrPage() {
             <section className="px-6 py-6 border-t border-gold/20">
               <p className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-5">랜딩 페이지</p>
               <div className="flex flex-col gap-4">
+                <div>
+                  <label htmlFor="body" className={labelClass}>
+                    소개 본문{' '}
+                    <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
+                  </label>
+                  <textarea
+                    id="body"
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    rows={3}
+                    placeholder="작품에 담긴 이야기를 2-3줄로 소개해주세요"
+                    className={`${inputClass} resize-none`}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="quote" className={labelClass}>
+                    강조 문장{' '}
+                    <span className="text-[11px] text-brown-muted font-normal">(선택 · 큰따옴표로 강조 표시)</span>
+                  </label>
+                  <input
+                    id="quote"
+                    value={quote}
+                    onChange={(e) => setQuote(e.target.value)}
+                    placeholder="작지만 오래 간직할 수 있는 전통의 가치"
+                    className={inputClass}
+                  />
+                </div>
+
                 <div>
                   <label htmlFor="idus-url" className={labelClass}>
                     아이디어스 구매 링크{' '}
@@ -141,14 +190,14 @@ export default function NewQrPage() {
                 <div>
                   <label htmlFor="purchase-notes" className={labelClass}>
                     구매 전 확인사항{' '}
-                    <span className="text-[11px] text-brown-muted font-normal">(선택)</span>
+                    <span className="text-[11px] text-brown-muted font-normal">(선택 · 줄바꿈으로 항목 구분)</span>
                   </label>
                   <textarea
                     id="purchase-notes"
                     value={purchaseNotes}
                     onChange={(e) => setPurchaseNotes(e.target.value)}
                     rows={4}
-                    placeholder="핸드메이드 제품으로 색상·크기에 차이가 있을 수 있습니다."
+                    placeholder={"핸드메이드 제품으로 색상·크기에 차이가 있을 수 있습니다\n사진과 실물 색상이 다를 수 있습니다"}
                     className={`${inputClass} resize-none`}
                   />
                 </div>
