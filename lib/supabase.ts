@@ -1,5 +1,6 @@
+// lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
-import type { QrCode, Product, ProductSection } from '@/lib/types'
+import type { QrCode, Product } from '@/lib/types'
 
 interface Admin {
   id: string
@@ -19,20 +20,44 @@ type Database = {
       }
       products: {
         Row: Product & Record<string, unknown>
-        Insert: Omit<Product, 'id'> & Record<string, unknown>
-        Update: Partial<Omit<Product, 'id'>> & Record<string, unknown>
+        Insert: Omit<Product, 'id' | 'product_tags' | 'notice_groups' | 'product_sections'> & Record<string, unknown>
+        Update: Partial<Omit<Product, 'id' | 'product_tags' | 'notice_groups' | 'product_sections'>> & Record<string, unknown>
+        Relationships: []
+      }
+      notice_groups: {
+        Row: { id: string; name: string } & Record<string, unknown>
+        Insert: { name: string } & Record<string, unknown>
+        Update: Partial<{ name: string }> & Record<string, unknown>
+        Relationships: []
+      }
+      notice_group_items: {
+        Row: { id: string; notice_group_id: string; content: string; sort_order: number } & Record<string, unknown>
+        Insert: { notice_group_id: string; content: string; sort_order?: number } & Record<string, unknown>
+        Update: Partial<{ content: string; sort_order: number }> & Record<string, unknown>
+        Relationships: []
+      }
+      product_tags: {
+        Row: { id: string; product_id: string; label: string; sort_order: number } & Record<string, unknown>
+        Insert: { product_id: string; label: string; sort_order?: number } & Record<string, unknown>
+        Update: Partial<{ label: string; sort_order: number }> & Record<string, unknown>
+        Relationships: []
+      }
+      product_sections: {
+        Row: { id: string; product_id: string; section_type: string; title: string | null; body: string | null; sort_order: number } & Record<string, unknown>
+        Insert: { product_id: string; section_type: string; title?: string | null; body?: string | null; sort_order?: number } & Record<string, unknown>
+        Update: Partial<{ section_type: string; title: string | null; body: string | null; sort_order: number }> & Record<string, unknown>
+        Relationships: []
+      }
+      product_section_items: {
+        Row: { id: string; section_id: string; title: string | null; description: string | null; sort_order: number } & Record<string, unknown>
+        Insert: { section_id: string; title?: string | null; description?: string | null; sort_order?: number } & Record<string, unknown>
+        Update: Partial<{ title: string | null; description: string | null; sort_order: number }> & Record<string, unknown>
         Relationships: []
       }
       admins: {
         Row: Admin & Record<string, unknown>
         Insert: Omit<Admin, 'id' | 'created_at'> & Record<string, unknown>
         Update: Partial<Omit<Admin, 'id' | 'created_at'>> & Record<string, unknown>
-        Relationships: []
-      }
-      product_sections: {
-        Row: ProductSection & Record<string, unknown>
-        Insert: Omit<ProductSection, 'id' | 'created_at'> & Record<string, unknown>
-        Update: Partial<Omit<ProductSection, 'id' | 'created_at'>> & Record<string, unknown>
         Relationships: []
       }
     }

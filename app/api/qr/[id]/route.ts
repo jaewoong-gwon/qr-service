@@ -23,12 +23,12 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const body = await request.json()
-  const { drive_folder_url, name, description, price, materials, dimensions } = body
+  const requestBody = await request.json()
+  const { drive_folder_url, name, subtitle, summary, idus_url } = requestBody
 
   const supabase = createServerSupabaseClient()
 
-  if (drive_folder_url !== undefined) {
+  if (drive_folder_url != null) {
     const folderId = parseFolderUrl(drive_folder_url ?? '')
     if (
       !drive_folder_url?.startsWith('https://drive.google.com/') ||
@@ -49,12 +49,11 @@ export async function PATCH(
     }
   }
 
-  const productUpdates: Record<string, string | null> = {}
-  if (name !== undefined) productUpdates.name = name
-  if (description !== undefined) productUpdates.description = description
-  if (price !== undefined) productUpdates.price = price
-  if (materials !== undefined) productUpdates.materials = materials
-  if (dimensions !== undefined) productUpdates.dimensions = dimensions
+  const productUpdates: Record<string, string | null | boolean> = {}
+  if (name !== undefined) productUpdates.name = name?.trim() ?? name
+  if (subtitle !== undefined) productUpdates.subtitle = subtitle
+  if (summary !== undefined) productUpdates.summary = summary
+  if (idus_url !== undefined) productUpdates.idus_url = idus_url
 
   if (Object.keys(productUpdates).length > 0) {
     const { error } = await supabase

@@ -1,13 +1,5 @@
 import type { Metadata } from 'next'
-import { Gowun_Dodum } from 'next/font/google'
 import './globals.css'
-
-const gowunDodum = Gowun_Dodum({
-  weight: '400',
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-serif',
-})
 
 export const metadata: Metadata = {
   title: 'QR Code Manager',
@@ -15,7 +7,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className={gowunDodum.variable}>
+    <html lang="ko">
+      <head>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css"
+        />
+      </head>
       <body>{children}</body>
     </html>
   )
