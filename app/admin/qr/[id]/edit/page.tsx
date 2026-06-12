@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { getFolderImages } from '@/lib/drive'
 import { notFound } from 'next/navigation'
 import { EditClient } from './EditClient'
 import type { QrCodeWithProduct, NoticeGroup } from '@/lib/types'
@@ -39,8 +38,7 @@ export default async function EditPage({
   if (!data) notFound()
 
   const item = data as unknown as QrCodeWithProduct
-  const images = await getFolderImages(item.drive_folder_url)
   const groups = (allGroups ?? []) as unknown as (NoticeGroup & { id: string; name: string })[]
 
-  return <EditClient item={item} images={images} allNoticeGroups={groups} />
+  return <EditClient item={item} allNoticeGroups={groups} />
 }

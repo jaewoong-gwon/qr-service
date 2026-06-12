@@ -7,11 +7,9 @@ import { TagsPanel } from '@/components/admin/TagsPanel'
 import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
 import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup } from '@/lib/types'
-import type { DriveImage } from '@/lib/drive'
 
 interface EditClientProps {
   item: QrCodeWithProduct
-  images: DriveImage[]
   allNoticeGroups: (NoticeGroup & { id: string; name: string })[]
 }
 
@@ -28,7 +26,7 @@ const INNER_H = 800
 const OUTER_W = Math.round(INNER_W * PREVIEW_SCALE)
 const OUTER_H = Math.round(INNER_H * PREVIEW_SCALE)
 
-export function EditClient({ item, images, allNoticeGroups }: EditClientProps) {
+export function EditClient({ item, allNoticeGroups }: EditClientProps) {
   const p = item.products
 
   const [driveUrl, setDriveUrl] = useState(item.drive_folder_url ?? '')
@@ -141,7 +139,6 @@ export function EditClient({ item, images, allNoticeGroups }: EditClientProps) {
                     placeholder="https://drive.google.com/drive/folders/..."
                     className={inputClass}
                   />
-                  <p className={`mt-1.5 ${hintClass}`}>변경 시 사진 갤러리가 새 폴더로 교체됩니다.</p>
                 </div>
                 <div>
                   <label className={labelClass}>
@@ -250,7 +247,7 @@ export function EditClient({ item, images, allNoticeGroups }: EditClientProps) {
                       pointerEvents: 'none',
                     }}
                   >
-                    <ProductLandingPage product={previewProduct} images={images} />
+                    <ProductLandingPage product={previewProduct} />
                   </div>
                 </div>
                 <p className="text-xs text-brown-muted text-center mt-2">

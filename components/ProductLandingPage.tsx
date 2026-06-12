@@ -1,14 +1,12 @@
 import type { Product } from '@/lib/types'
-import { driveThumbUrl, type DriveImage } from '@/lib/drive'
 import { SectionCard } from '@/components/sections/SectionCard'
 import { ItemGridCard } from '@/components/sections/ItemGridCard'
 
 interface ProductLandingPageProps {
   product: Product | null
-  images?: DriveImage[]
 }
 
-export function ProductLandingPage({ product, images = [] }: ProductLandingPageProps) {
+export function ProductLandingPage({ product }: ProductLandingPageProps) {
   if (!product) {
     return (
       <div className="min-h-screen bg-cream-bg flex items-center justify-center">
@@ -71,23 +69,6 @@ export function ProductLandingPage({ product, images = [] }: ProductLandingPageP
                 </li>
               ))}
             </ul>
-          </div>
-        )}
-
-        {/* Drive 이미지 갤러리 */}
-        {images.length > 0 && (
-          <div className="bg-cream rounded-2xl overflow-hidden">
-            <div className="flex gap-2 overflow-x-auto px-3 pt-3 pb-2 scrollbar-hide">
-              {images.map((img) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={img.id}
-                  src={driveThumbUrl(img.id, 600)}
-                  alt={img.name}
-                  className="h-48 w-auto rounded-xl object-cover flex-shrink-0"
-                />
-              ))}
-            </div>
           </div>
         )}
 

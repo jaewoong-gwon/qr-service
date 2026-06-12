@@ -203,12 +203,9 @@ export default function NewQrPage() {
                       pointerEvents: 'none',
                     }}
                   >
-                    <ProductLandingPage product={previewProduct} images={[]} />
+                    <ProductLandingPage product={previewProduct} />
                   </div>
                 </div>
-                <p className="text-xs text-brown-muted text-center mt-2">
-                  이미지는 생성 후 수정 페이지에서 확인됩니다
-                </p>
               </div>
             </div>
           </div>
