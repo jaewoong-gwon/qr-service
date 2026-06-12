@@ -3,12 +3,16 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ProductLandingPage } from '@/components/ProductLandingPage'
-import type { QrCodeWithProduct, Product } from '@/lib/types'
+import { TagsPanel } from '@/components/admin/TagsPanel'
+import { SectionsPanel } from '@/components/admin/SectionsPanel'
+import { NoticePanel } from '@/components/admin/NoticePanel'
+import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup } from '@/lib/types'
 import type { DriveImage } from '@/lib/drive'
 
 interface EditClientProps {
   item: QrCodeWithProduct
   images: DriveImage[]
+  allNoticeGroups: (NoticeGroup & { id: string; name: string })[]
 }
 
 const inputClass =
@@ -21,10 +25,10 @@ const sectionHeadClass =
 const PREVIEW_SCALE = 0.923
 const INNER_W = 390
 const INNER_H = 800
-const OUTER_W = Math.round(INNER_W * PREVIEW_SCALE) // 360
-const OUTER_H = Math.round(INNER_H * PREVIEW_SCALE) // 738
+const OUTER_W = Math.round(INNER_W * PREVIEW_SCALE)
+const OUTER_H = Math.round(INNER_H * PREVIEW_SCALE)
 
-export function EditClient({ item, images }: EditClientProps) {
+export function EditClient({ item, images, allNoticeGroups }: EditClientProps) {
   const p = item.products
 
   const [driveUrl, setDriveUrl] = useState(item.drive_folder_url ?? '')
@@ -32,6 +36,12 @@ export function EditClient({ item, images }: EditClientProps) {
   const [subtitle, setSubtitle] = useState(p?.subtitle ?? '')
   const [summary, setSummary] = useState(p?.summary ?? '')
   const [idusUrl, setIdusUrl] = useState(p?.idus_url ?? '')
+
+  const [tags, setTags] = useState<(ProductTag & { id: string })[]>(
+    (p?.product_tags ?? []) as (ProductTag & { id: string })[]
+  )
+  const [sections, setSections] = useState<ProductSection[]>(p?.product_sections ?? [])
+  const [noticeGroupId, setNoticeGroupId] = useState<string | null>(p?.notice_group_id ?? null)
 
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -45,9 +55,9 @@ export function EditClient({ item, images }: EditClientProps) {
     summary: summary.trim() || null,
     idus_url: idusUrl.trim() || null,
     is_active: p?.is_active ?? true,
-    product_tags: p?.product_tags,
-    notice_groups: p?.notice_groups,
-    product_sections: p?.product_sections,
+    product_tags: tags,
+    notice_groups: allNoticeGroups.find((g) => g.id === noticeGroupId) ?? p?.notice_groups ?? null,
+    product_sections: sections,
   }
 
   async function handleSave() {
@@ -79,7 +89,6 @@ export function EditClient({ item, images }: EditClientProps) {
 
   return (
     <div className="min-h-screen bg-cream-bg">
-      {/* 상단 네비게이션 */}
       <nav className="bg-cream border-b border-gold/30 px-8 py-4 sticky top-0 z-10">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -96,9 +105,7 @@ export function EditClient({ item, images }: EditClientProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            {saved && (
-              <span className="text-sm text-green-600 font-medium">저장되었습니다</span>
-            )}
+            {saved && <span className="text-sm text-green-600 font-medium">저장되었습니다</span>}
             {error && <span className="text-sm text-red-500">{error}</span>}
             <Link
               href={`/r/${item.slug}`}
@@ -118,19 +125,16 @@ export function EditClient({ item, images }: EditClientProps) {
         </div>
       </nav>
 
-      {/* 본문 */}
       <main className="max-w-screen-xl mx-auto px-8 py-8">
         <div className="flex gap-8 items-start">
-          {/* 왼쪽: 수정 폼 */}
           <div className="flex-1 min-w-0 flex flex-col gap-5">
             {/* 기본 정보 */}
             <div className="bg-cream border border-gold/40 rounded-xl px-6 py-6">
               <p className={sectionHeadClass}>기본 정보</p>
               <div className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="drive-url" className={labelClass}>Google Drive 폴더 URL</label>
+                  <label className={labelClass}>Google Drive 폴더 URL</label>
                   <input
-                    id="drive-url"
                     type="url"
                     value={driveUrl}
                     onChange={(e) => setDriveUrl(e.target.value)}
@@ -139,39 +143,33 @@ export function EditClient({ item, images }: EditClientProps) {
                   />
                   <p className={`mt-1.5 ${hintClass}`}>변경 시 사진 갤러리가 새 폴더로 교체됩니다.</p>
                 </div>
-
                 <div>
-                  <label htmlFor="name" className={labelClass}>
+                  <label className={labelClass}>
                     제품명 <span className="text-gold">*</span>
                   </label>
                   <input
-                    id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="레진 갓 키링"
                     className={inputClass}
                   />
                 </div>
-
                 <div>
-                  <label htmlFor="subtitle" className={labelClass}>
+                  <label className={labelClass}>
                     한 줄 카피 <span className={hintClass}>(제품명 위에 표시)</span>
                   </label>
                   <input
-                    id="subtitle"
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
                     placeholder="전통의 아름다움을 일상 속에"
                     className={inputClass}
                   />
                 </div>
-
                 <div>
-                  <label htmlFor="summary" className={labelClass}>
+                  <label className={labelClass}>
                     요약 <span className={hintClass}>(hero 영역 하단 짧은 문단)</span>
                   </label>
                   <textarea
-                    id="summary"
                     value={summary}
                     onChange={(e) => setSummary(e.target.value)}
                     rows={2}
@@ -179,11 +177,9 @@ export function EditClient({ item, images }: EditClientProps) {
                     className={`${inputClass} resize-none`}
                   />
                 </div>
-
                 <div>
-                  <label htmlFor="idus-url" className={labelClass}>아이디어스 구매 링크</label>
+                  <label className={labelClass}>아이디어스 구매 링크</label>
                   <input
-                    id="idus-url"
                     type="url"
                     value={idusUrl}
                     onChange={(e) => setIdusUrl(e.target.value)}
@@ -195,16 +191,41 @@ export function EditClient({ item, images }: EditClientProps) {
               </div>
             </div>
 
-            {/* 섹션/태그/구매안내: Supabase 직접 편집 안내 */}
-            <div className="bg-cream border border-gold/30 rounded-xl px-6 py-5 text-sm text-brown-mid">
-              <p className="font-bold text-brown-dark mb-2">섹션 · 태그 · 구매 안내 편집</p>
-              <p>
-                Supabase 대시보드에서 직접{' '}
-                <code className="bg-cream-bg px-1 rounded text-xs">product_sections</code>,{' '}
-                <code className="bg-cream-bg px-1 rounded text-xs">product_tags</code>,{' '}
-                <code className="bg-cream-bg px-1 rounded text-xs">notice_group_items</code>{' '}
-                테이블을 편집하세요. 저장 후 페이지를 새로고침하면 미리보기에 반영됩니다.
+            {/* 태그 */}
+            <div className="bg-cream border border-gold/40 rounded-xl px-6 py-6">
+              <p className={sectionHeadClass}>태그</p>
+              <TagsPanel
+                mode="edit"
+                tags={tags}
+                qrId={item.id}
+                onUpdate={setTags}
+              />
+            </div>
+
+            {/* 섹션 */}
+            <div className="bg-cream border border-gold/40 rounded-xl px-6 py-6">
+              <p className={sectionHeadClass}>섹션</p>
+              <SectionsPanel
+                mode="edit"
+                sections={sections}
+                qrId={item.id}
+                onUpdate={setSections}
+              />
+            </div>
+
+            {/* 구매 안내 */}
+            <div className="bg-cream border border-gold/40 rounded-xl px-6 py-6">
+              <p className={sectionHeadClass}>구매 안내</p>
+              <p className="text-xs text-brown-muted mb-3">
+                공유 그룹 항목 수정 시 해당 그룹을 사용하는 모든 제품에 반영됩니다.
               </p>
+              <NoticePanel
+                mode="edit"
+                currentGroupId={noticeGroupId}
+                groups={allNoticeGroups}
+                qrId={item.id}
+                onUpdate={setNoticeGroupId}
+              />
             </div>
           </div>
 
