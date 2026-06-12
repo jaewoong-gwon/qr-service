@@ -1,4 +1,4 @@
-// lib/types.ts
+// lib/types.ts — FINAL
 
 export interface QrCode {
   id: string
@@ -50,27 +50,15 @@ export interface Product {
   id: string
   qr_code_id: string
   name: string
-  // New fields — optional here for backward compat; made required in Task 4
-  subtitle?: string | null
-  summary?: string | null
-  is_active?: boolean
-  idus_url?: string | null
+  subtitle: string | null
+  summary: string | null
+  idus_url: string | null
+  is_active: boolean
   notice_group_id?: string | null
-  // New optional join fields (populated by nested select queries)
+  // Optional: populated only by nested select queries (landing page, edit page)
   product_tags?: ProductTag[]
   notice_groups?: NoticeGroup | null
   product_sections?: ProductSection[]
-  // Deprecated: preserved until manual data migration; removed in Task 4
-  /** @deprecated use subtitle */
-  description?: string | null
-  /** @deprecated use product_sections */
-  keywords?: string | null
-  /** @deprecated use product_sections */
-  body?: string | null
-  /** @deprecated use product_sections (closing section) */
-  quote?: string | null
-  /** @deprecated use notice_groups */
-  purchase_notes?: string | null
 }
 
 export interface QrCodeWithProduct extends QrCode {
