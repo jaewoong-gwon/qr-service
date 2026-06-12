@@ -40,7 +40,7 @@ export default async function EditPage({
 
   const item = data as unknown as QrCodeWithProduct
   const images = await getFolderImages(item.drive_folder_url)
-  const groups = (allGroups ?? []) as (NoticeGroup & { id: string; name: string })[]
+  const groups = (allGroups ?? []) as unknown as (NoticeGroup & { id: string; name: string })[]
 
   return <EditClient item={item} images={images} allNoticeGroups={groups} />
 }
