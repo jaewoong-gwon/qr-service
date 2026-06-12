@@ -58,23 +58,19 @@ describe('ProductLandingPage', () => {
     expect(screen.getByText('사진과 실물 색상이 다를 수 있습니다')).toBeInTheDocument()
   })
 
-  it('idus_url이 있으면 구매하기 버튼과 작품 페이지 보기 버튼이 표시된다', () => {
+  it('idus_url이 있으면 작품 페이지 보기 링크가 표시되고 구매하기 버튼은 없다', () => {
     render(<ProductLandingPage product={baseProduct} />)
-    expect(screen.getByRole('link', { name: /아이디어스에서 구매하기/ })).toHaveAttribute(
-      'href',
-      'https://www.idus.com/v2/product/abc123'
-    )
+    expect(screen.queryByRole('link', { name: /아이디어스에서 구매하기/ })).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })).toHaveAttribute(
       'href',
       'https://www.idus.com/v2/product/abc123'
     )
   })
 
-  it('idus_url이 없으면 링크 없고 준비 중 안내가 표시된다', () => {
+  it('idus_url이 없으면 아이디어스 링크가 없다', () => {
     render(<ProductLandingPage product={{ ...baseProduct, idus_url: null }} />)
     expect(screen.queryByRole('link', { name: /구매하기/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /작품 페이지 보기/ })).not.toBeInTheDocument()
-    expect(screen.getByText('구매 링크 준비 중입니다')).toBeInTheDocument()
   })
 
   it('purchase_notes가 없으면 구매 전 확인사항 섹션이 없다', () => {
