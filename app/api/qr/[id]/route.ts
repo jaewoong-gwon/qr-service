@@ -23,8 +23,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const body = await request.json()
-  const { drive_folder_url, name, description, idus_url, purchase_notes } = body
+  const requestBody = await request.json()
+  const { drive_folder_url, name, description, idus_url, purchase_notes, keywords, body, quote } = requestBody
 
   const supabase = createServerSupabaseClient()
 
@@ -54,6 +54,9 @@ export async function PATCH(
   if (description !== undefined) productUpdates.description = description
   if (idus_url !== undefined) productUpdates.idus_url = idus_url
   if (purchase_notes !== undefined) productUpdates.purchase_notes = purchase_notes
+  if (keywords !== undefined) productUpdates.keywords = keywords
+  if (body !== undefined) productUpdates.body = body
+  if (quote !== undefined) productUpdates.quote = quote
 
   if (Object.keys(productUpdates).length > 0) {
     const { error } = await supabase

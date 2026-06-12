@@ -10,6 +10,9 @@ const baseProduct: Product = {
   description: '전통 갓의 아름다움을 담은 레진 키링',
   idus_url: 'https://www.idus.com/v2/product/abc123',
   purchase_notes: '핸드메이드 제품으로 색상·크기에 차이가 있습니다\n사진과 실물 색상이 다를 수 있습니다\n교환·환불은 아이디어스 정책을 따릅니다',
+  keywords: null,
+  body: null,
+  quote: null,
 }
 
 describe('ProductLandingPage', () => {

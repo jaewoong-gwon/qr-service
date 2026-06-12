@@ -18,8 +18,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
-  const { drive_folder_url, name, description, idus_url, purchase_notes } = body
+  const requestBody = await request.json()
+  const { drive_folder_url, name, description, idus_url, purchase_notes, keywords, body, quote } = requestBody
 
   const folderId = parseFolderUrl(drive_folder_url ?? '')
   if (
@@ -55,6 +55,9 @@ export async function POST(request: NextRequest) {
           description: description ?? null,
           idus_url: idus_url ?? null,
           purchase_notes: purchase_notes ?? null,
+          keywords: keywords ?? null,
+          body: body ?? null,
+          quote: quote ?? null,
         })
         .select()
         .single()
@@ -81,6 +84,9 @@ export async function POST(request: NextRequest) {
       description: description ?? null,
       idus_url: idus_url ?? null,
       purchase_notes: purchase_notes ?? null,
+      keywords: keywords ?? null,
+      body: body ?? null,
+      quote: quote ?? null,
     })
     .select()
     .single()

@@ -25,6 +25,9 @@ const mockItem: QrCodeWithProduct = {
     description: null,
     idus_url: null,
     purchase_notes: null,
+    keywords: null,
+    body: null,
+    quote: null,
   },
 }
 

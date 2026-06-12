@@ -12,6 +12,9 @@ export interface Product {
   description: string | null
   idus_url: string | null
   purchase_notes: string | null
+  keywords: string | null
+  body: string | null
+  quote: string | null
 }
 
 export interface QrCodeWithProduct extends QrCode {
