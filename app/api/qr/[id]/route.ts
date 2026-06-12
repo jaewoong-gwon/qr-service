@@ -28,7 +28,7 @@ export async function PATCH(
 
   const supabase = createServerSupabaseClient()
 
-  if (drive_folder_url !== undefined) {
+  if (drive_folder_url != null) {
     const folderId = parseFolderUrl(drive_folder_url ?? '')
     if (
       !drive_folder_url?.startsWith('https://drive.google.com/') ||
@@ -50,7 +50,7 @@ export async function PATCH(
   }
 
   const productUpdates: Record<string, string | null | boolean> = {}
-  if (name !== undefined) productUpdates.name = name
+  if (name !== undefined) productUpdates.name = name?.trim() ?? name
   if (subtitle !== undefined) productUpdates.subtitle = subtitle
   if (summary !== undefined) productUpdates.summary = summary
   if (idus_url !== undefined) productUpdates.idus_url = idus_url
