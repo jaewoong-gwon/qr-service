@@ -16,16 +16,19 @@ test('QR creation form has correct fields', async ({ page }) => {
   await page.goto('/admin/qr/new')
   await expect(page.getByLabel('제품명')).toBeVisible()
   await expect(page.getByLabel('Google Drive 폴더 URL')).toBeVisible()
-  await expect(page.getByLabel('작품 소개', { exact: false })).toBeVisible()
+  await expect(page.getByLabel('한 줄 카피', { exact: false })).toBeVisible()
   await expect(page.getByLabel('아이디어스 구매 링크', { exact: false })).toBeVisible()
-  await expect(page.getByLabel('구매 전 확인사항', { exact: false })).toBeVisible()
 })
 
 test('invalid URL shows error', async ({ page }) => {
   await page.goto('/admin/qr/new')
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
   await page.getByLabel('Google Drive 폴더 URL').fill('https://not-drive.com/file')
-  await page.getByRole('button', { name: 'QR 생성' }).click()
+  // Navigate wizard steps 1→2→3→4→5
+  for (let i = 0; i < 4; i++) {
+    await page.getByRole('button', { name: '다음 →' }).click()
+  }
+  await page.getByRole('button', { name: '완료 — QR 생성' }).click()
   await expect(page.getByText('유효한 Google Drive 링크가 아닙니다')).toBeVisible()
 })
 
@@ -35,7 +38,11 @@ test('valid Drive folder URL creates QR and redirects to dashboard', async ({ pa
   await page.goto('/admin/qr/new')
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
   await page.getByLabel('Google Drive 폴더 URL').fill(uniqueUrl)
-  await page.getByRole('button', { name: 'QR 생성' }).click()
+  // Navigate wizard steps 1→2→3→4→5
+  for (let i = 0; i < 4; i++) {
+    await page.getByRole('button', { name: '다음 →' }).click()
+  }
+  await page.getByRole('button', { name: '완료 — QR 생성' }).click()
   await expect(page).toHaveURL('/admin/dashboard')
 })
 
@@ -91,7 +98,6 @@ test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ 
       name: TEST_PRODUCT_NAME,
       drive_folder_url: uniqueUrl,
       idus_url: 'https://www.idus.com/v2/product/e2e-test-id',
-      purchase_notes: 'E2E 테스트 확인사항',
     },
   })
   const { id, slug } = await createRes.json()
@@ -101,7 +107,6 @@ test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ 
   const link = page.getByRole('link', { name: /아이디어스에서 구매하기/ })
   await expect(link).toBeVisible()
   await expect(link).toHaveAttribute('href', 'https://www.idus.com/v2/product/e2e-test-id')
-  await expect(page.getByText('E2E 테스트 확인사항')).toBeVisible()
 
   if (id) {
     await page.request.delete(`/api/qr/${id}`)
