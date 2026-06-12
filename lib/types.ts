@@ -55,6 +55,7 @@ export interface Product {
   summary?: string | null
   is_active?: boolean
   idus_url?: string | null
+  notice_group_id?: string | null
   // New optional join fields (populated by nested select queries)
   product_tags?: ProductTag[]
   notice_groups?: NoticeGroup | null
