@@ -1,5 +1,5 @@
 import type { Product } from '@/lib/types'
-import type { DriveImage } from '@/lib/drive'
+import { driveThumbUrl, type DriveImage } from '@/lib/drive'
 import { SectionCard } from '@/components/sections/SectionCard'
 import { ItemGridCard } from '@/components/sections/ItemGridCard'
 
@@ -82,7 +82,7 @@ export function ProductLandingPage({ product, images = [] }: ProductLandingPageP
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={img.id}
-                  src={`https://drive.google.com/thumbnail?id=${img.id}&sz=w600`}
+                  src={driveThumbUrl(img.id, 600)}
                   alt={img.name}
                   className="h-48 w-auto rounded-xl object-cover flex-shrink-0"
                 />
@@ -93,6 +93,10 @@ export function ProductLandingPage({ product, images = [] }: ProductLandingPageP
 
         {/* 동적 섹션: section_type에 따라 카드 분기 */}
         {sections.map((section) => {
+          // skip sections with no renderable content
+          if (!section.title && !section.body && section.product_section_items.length === 0) {
+            return null
+          }
           if (
             section.section_type === 'color_meaning' ||
             section.section_type === 'symbol_meaning'
