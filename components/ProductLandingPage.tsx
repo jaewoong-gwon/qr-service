@@ -28,7 +28,7 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
   return (
     <div className="min-h-screen bg-cream-bg">
       {/* Hero */}
-      <div className="bg-cream px-5 pt-8 pb-6">
+      <div className="bg-cream px-5 pt-8 pb-6 text-center">
         {product.description && (
           <p className="text-xs text-brown-mid tracking-wide mb-2">{product.description}</p>
         )}
