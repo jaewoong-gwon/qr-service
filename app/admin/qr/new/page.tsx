@@ -14,8 +14,9 @@ import type { Product, ProductTag, ProductSection, NoticeGroup } from '@/lib/typ
 
 const PREVIEW_SCALE = 0.923
 const INNER_W = 390
-const OUTER_W = Math.round(INNER_W * PREVIEW_SCALE)
-const OUTER_H = Math.round(800 * PREVIEW_SCALE)
+const BORDER_W = 4
+const OUTER_W = Math.round(INNER_W * PREVIEW_SCALE) + BORDER_W * 2
+const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
