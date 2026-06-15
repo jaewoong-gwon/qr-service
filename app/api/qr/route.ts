@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   const { data: qrCode, error: qrError } = await supabase
     .from('qr_codes')
-    .insert({ slug, drive_folder_url: '' })
+    .insert({ slug })
     .select()
     .single()
 

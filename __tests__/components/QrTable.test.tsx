@@ -16,8 +16,7 @@ vi.mock('react-qr-code', () => ({
 const mockItem: QrCodeWithProduct = {
   id: '1',
   slug: 'test-slug',
-  drive_folder_url: 'https://drive.google.com/drive/folders/abc',
-  created_at: '2025-01-01T00:00:00Z',
+created_at: '2025-01-01T00:00:00Z',
   products: {
     id: 'p1',
     qr_code_id: '1',
