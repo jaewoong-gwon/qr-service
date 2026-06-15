@@ -39,6 +39,7 @@ export default function NewQrPage() {
     fetch('/api/notice-groups')
       .then((r) => r.json())
       .then((data) => { if (Array.isArray(data)) setNoticeGroups(data) })
+      .catch((err) => console.error('Failed to load notice groups:', err))
   }, [])
 
   const canCreate = basic.name.trim() !== '' && basic.idusUrl.trim() !== ''
