@@ -246,8 +246,7 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
                   <div
                     style={{
                       width: `${INNER_W}px`,
-                      transform: `scale(${PREVIEW_SCALE})`,
-                      transformOrigin: 'top left',
+                      zoom: PREVIEW_SCALE,
                       pointerEvents: 'none',
                     }}
                   >
