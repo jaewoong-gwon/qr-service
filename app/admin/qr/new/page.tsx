@@ -205,8 +205,8 @@ export default function NewQrPage() {
               </p>
               <div className="mx-auto" style={{ width: `${OUTER_W}px` }}>
                 <div
-                  className="overflow-y-auto overflow-x-hidden rounded-[36px] border-4 border-brown-dark/30 shadow-2xl bg-cream-bg"
-                  style={{ width: `${OUTER_W}px`, height: `${OUTER_H}px` }}
+                  className="overflow-y-auto overflow-x-hidden rounded-[36px] border-4 border-brown-dark/30 shadow-2xl bg-cream-bg [&::-webkit-scrollbar]:hidden"
+                  style={{ width: `${OUTER_W}px`, height: `${OUTER_H}px`, scrollbarWidth: 'none' }}
                 >
                   <div
                     style={{
