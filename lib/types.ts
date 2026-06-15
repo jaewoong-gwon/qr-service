@@ -3,7 +3,7 @@
 export interface QrCode {
   id: string
   slug: string
-  drive_folder_url: string
+  drive_folder_url?: string
   created_at: string
 }
 

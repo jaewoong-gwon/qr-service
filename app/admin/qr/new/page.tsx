@@ -20,7 +20,7 @@ const OUTER_H = Math.round(INNER_H * PREVIEW_SCALE)
 
 const STEP_LABELS = ['기본 정보', '태그', '섹션', '구매 안내', '확인']
 
-const INITIAL_BASIC: BasicData = { name: '', driveUrl: '', subtitle: '', summary: '', idusUrl: '' }
+const INITIAL_BASIC: BasicData = { name: '', subtitle: '', summary: '', idusUrl: '' }
 
 export default function NewQrPage() {
   const router = useRouter()
@@ -54,7 +54,6 @@ export default function NewQrPage() {
 
     const body = {
       name: basic.name.trim(),
-      drive_folder_url: basic.driveUrl.trim(),
       subtitle: basic.subtitle.trim() || null,
       summary: basic.summary.trim() || null,
       idus_url: basic.idusUrl.trim() || null,

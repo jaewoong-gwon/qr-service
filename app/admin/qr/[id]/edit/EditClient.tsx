@@ -29,7 +29,6 @@ const OUTER_H = Math.round(INNER_H * PREVIEW_SCALE)
 export function EditClient({ item, allNoticeGroups }: EditClientProps) {
   const p = item.products
 
-  const [driveUrl, setDriveUrl] = useState(item.drive_folder_url ?? '')
   const [name, setName] = useState(p?.name ?? '')
   const [subtitle, setSubtitle] = useState(p?.subtitle ?? '')
   const [summary, setSummary] = useState(p?.summary ?? '')
@@ -67,7 +66,6 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        drive_folder_url: driveUrl.trim() || null,
         name: name.trim(),
         subtitle: subtitle.trim() || null,
         summary: summary.trim() || null,
@@ -130,16 +128,6 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
             <div className="bg-cream border border-gold/40 rounded-xl px-6 py-6">
               <p className={sectionHeadClass}>기본 정보</p>
               <div className="flex flex-col gap-4">
-                <div>
-                  <label className={labelClass}>Google Drive 폴더 URL</label>
-                  <input
-                    type="url"
-                    value={driveUrl}
-                    onChange={(e) => setDriveUrl(e.target.value)}
-                    placeholder="https://drive.google.com/drive/folders/..."
-                    className={inputClass}
-                  />
-                </div>
                 <div>
                   <label className={labelClass}>
                     제품명 <span className="text-gold">*</span>

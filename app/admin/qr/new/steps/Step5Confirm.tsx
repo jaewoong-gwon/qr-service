@@ -38,7 +38,6 @@ export function Step5Confirm({
     <div className="flex flex-col gap-5">
       <Section title="기본 정보">
         <Row label="제품명" value={basic.name || '(없음)'} />
-        <Row label="Drive URL" value={basic.driveUrl || '(없음)'} />
         {basic.subtitle && <Row label="한 줄 카피" value={basic.subtitle} />}
         {basic.summary && <Row label="요약" value={basic.summary} />}
         {basic.idusUrl && <Row label="아이디어스 링크" value={basic.idusUrl} />}
@@ -94,7 +93,7 @@ export function Step5Confirm({
       <button
         type="button"
         onClick={onSubmit}
-        disabled={loading || !basic.name.trim() || !basic.driveUrl.trim()}
+        disabled={loading || !basic.name.trim()}
         className="w-full py-3 text-sm bg-gold text-cream font-bold rounded-xl hover:bg-gold/90 disabled:opacity-50 transition-colors"
       >
         {loading ? '생성 중...' : '완료 — QR 생성'}
