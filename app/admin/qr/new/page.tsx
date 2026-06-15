@@ -35,6 +35,7 @@ export default function NewQrPage() {
   const [loading, setLoading] = useState(false)
   const [createdId, setCreatedId] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [previewFocused, setPreviewFocused] = useState(false)
 
   useEffect(() => {
     fetch('/api/notice-groups')
@@ -204,18 +205,27 @@ export default function NewQrPage() {
               <p className="text-sm font-bold tracking-[2px] text-gold uppercase mb-3 text-center">
                 실시간 미리보기
               </p>
+              {/* 포커스 뱃지 — h-6 공간 항상 예약, opacity로 fade */}
+              <div className="flex justify-center mb-2 h-6">
+                <span
+                  aria-hidden="true"
+                  className={`text-[10px] bg-gold text-cream px-3 py-1 rounded-full font-bold transition-opacity ${
+                    previewFocused ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  ↕ 스크롤
+                </span>
+              </div>
               <div className="mx-auto" style={{ width: `${OUTER_W}px` }}>
                 <div
-                  className="overflow-y-auto overflow-x-hidden rounded-[36px] border-4 border-brown-dark/30 shadow-2xl bg-cream-bg [&::-webkit-scrollbar]:hidden"
+                  className={`overflow-y-auto overflow-x-hidden rounded-[36px] border-4 shadow-2xl bg-cream-bg [&::-webkit-scrollbar]:hidden transition-colors ${
+                    previewFocused ? 'border-gold' : 'border-brown-dark/30'
+                  }`}
                   style={{ width: `${OUTER_W}px`, height: `${OUTER_H}px`, scrollbarWidth: 'none' }}
+                  onMouseEnter={() => setPreviewFocused(true)}
+                  onMouseLeave={() => setPreviewFocused(false)}
                 >
-                  <div
-                    style={{
-                      width: `${INNER_W}px`,
-                      zoom: PREVIEW_SCALE,
-                      pointerEvents: 'none',
-                    }}
-                  >
+                  <div style={{ width: `${INNER_W}px`, zoom: PREVIEW_SCALE, pointerEvents: 'none' }}>
                     <ProductLandingPage product={previewProduct} />
                   </div>
                 </div>
