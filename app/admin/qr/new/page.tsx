@@ -160,7 +160,7 @@ export default function NewQrPage() {
         </div>
       </nav>
 
-      <main className="max-w-screen-xl mx-auto px-8 py-8" onClick={() => setPreviewFocused(false)}>
+      <main className="max-w-screen-xl mx-auto px-8 py-8">
         <div className="flex gap-8 items-start">
           {/* 탭 콘텐츠 */}
           <div className="flex-1 min-w-0">
@@ -222,7 +222,8 @@ export default function NewQrPage() {
                     previewFocused ? 'border-gold' : 'border-brown-dark/30'
                   }`}
                   style={{ width: `${OUTER_W}px`, height: `${OUTER_H}px`, scrollbarWidth: 'none' }}
-                  onClick={(e) => { e.stopPropagation(); setPreviewFocused(true) }}
+                  onMouseEnter={() => setPreviewFocused(true)}
+                  onMouseLeave={() => setPreviewFocused(false)}
                 >
                   <div style={{ width: `${INNER_W}px`, zoom: PREVIEW_SCALE, pointerEvents: 'none' }}>
                     <ProductLandingPage product={previewProduct} />
