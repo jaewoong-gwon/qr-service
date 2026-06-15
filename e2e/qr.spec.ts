@@ -36,7 +36,7 @@ test('creating QR shows modal and 홈으로 redirects to dashboard', async ({ pa
     `https://www.idus.com/v2/product/e2e-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
   )
   await page.getByRole('button', { name: 'QR 생성' }).click()
-  await expect(page.getByText('생성되었습니다')).toBeVisible()
+  await expect(page.getByRole('heading', { name: '생성되었습니다 ✓' })).toBeVisible()
   await page.getByRole('button', { name: '홈으로' }).click()
   await expect(page).toHaveURL('/admin/dashboard')
 })
