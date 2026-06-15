@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { getFolderImages } from '@/lib/drive'
 import { ProductLandingPage } from '@/components/ProductLandingPage'
 import type { QrCodeWithProduct } from '@/lib/types'
 
@@ -33,7 +32,6 @@ export default async function ProductPage({
   if (!qrCode) notFound()
 
   const item = qrCode as unknown as QrCodeWithProduct
-  const images = await getFolderImages(item.drive_folder_url)
 
-  return <ProductLandingPage product={item.products} images={images} />
+  return <ProductLandingPage product={item.products} />
 }

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { computeSlug } from '@/lib/qr'
-import { parseFolderUrl } from '@/lib/drive'
+import { generateSlug } from '@/lib/qr'
 import type { SectionType } from '@/lib/types'
 
 interface TagInput { label: string; sort_order: number }
@@ -34,63 +33,21 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const requestBody = await request.json()
-  const {
-    drive_folder_url,
-    name,
-    subtitle,
-    summary,
-    idus_url,
-  } = requestBody
+  const { name, subtitle, summary, idus_url } = requestBody
   const tags: TagInput[] = requestBody.tags ?? []
   const sections: SectionInput[] = requestBody.sections ?? []
   const notice: NoticeInput | null = requestBody.notice ?? null
-
-  const folderId = parseFolderUrl(drive_folder_url ?? '')
-  if (
-    !drive_folder_url?.startsWith('https://drive.google.com/') ||
-    folderId === drive_folder_url.trim()
-  ) {
-    return NextResponse.json(
-      { error: '유효한 Google Drive 링크가 아닙니다' },
-      { status: 400 }
-    )
-  }
 
   if (!name?.trim()) {
     return NextResponse.json({ error: '제품명을 입력해주세요' }, { status: 400 })
   }
 
-  const slug = await computeSlug(drive_folder_url)
+  const slug = generateSlug()
   const supabase = createServerSupabaseClient()
-
-  const { data: existingQr } = await supabase
-    .from('qr_codes')
-    .select('*, products(*)')
-    .eq('slug', slug)
-    .single()
-
-  if (existingQr) {
-    if (!existingQr.products) {
-      const { data: product } = await supabase
-        .from('products')
-        .insert({
-          qr_code_id: existingQr.id,
-          name: name.trim(),
-          subtitle: subtitle ?? null,
-          summary: summary ?? null,
-          idus_url: idus_url ?? null,
-          is_active: true,
-        })
-        .select()
-        .single()
-      return NextResponse.json({ ...existingQr, products: product }, { status: 200 })
-    }
-    return NextResponse.json(existingQr, { status: 200 })
-  }
 
   const { data: qrCode, error: qrError } = await supabase
     .from('qr_codes')
-    .insert({ slug, drive_folder_url })
+    .insert({ slug })
     .select()
     .single()
 

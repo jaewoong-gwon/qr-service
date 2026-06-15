@@ -3,102 +3,60 @@
 import { test, expect } from '@playwright/test'
 
 const TEST_PRODUCT_NAME = 'E2E Test Product'
-
-// Read-only tests share a static URL (no DB writes).
-const STATIC_DRIVE_FOLDER_URL = 'https://drive.google.com/drive/folders/e2e-test-folder-id'
+const TEST_IDUS_URL = 'https://www.idus.com/v2/product/e2e-test-id'
 
 test('can access /admin/qr/new when authenticated', async ({ page }) => {
   await page.goto('/admin/qr/new')
   await expect(page.getByRole('heading', { name: '새 QR 코드 생성' })).toBeVisible()
 })
 
-test('QR creation form has correct fields', async ({ page }) => {
+test('QR creation form has correct fields on tab 1', async ({ page }) => {
   await page.goto('/admin/qr/new')
   await expect(page.getByLabel('제품명')).toBeVisible()
-  await expect(page.getByLabel('Google Drive 폴더 URL')).toBeVisible()
   await expect(page.getByLabel('한 줄 카피', { exact: false })).toBeVisible()
   await expect(page.getByLabel('아이디어스 구매 링크', { exact: false })).toBeVisible()
 })
 
-test('invalid URL shows error', async ({ page }) => {
+test('QR 생성 button is disabled without required fields', async ({ page }) => {
   await page.goto('/admin/qr/new')
-  await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
-  await page.getByLabel('Google Drive 폴더 URL').fill('https://not-drive.com/file')
-  // Navigate wizard steps 1→2→3→4→5
-  for (let i = 0; i < 4; i++) {
-    await page.getByRole('button', { name: '다음 →' }).click()
-  }
-  await page.getByRole('button', { name: '완료 — QR 생성' }).click()
-  await expect(page.getByText('유효한 Google Drive 링크가 아닙니다')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'QR 생성' })).toBeDisabled()
 })
 
-test('valid Drive folder URL creates QR and redirects to dashboard', async ({ page }) => {
-  const uniqueUrl = `https://drive.google.com/drive/folders/e2e-new-${Date.now()}`
-
+test('QR 생성 button activates after filling 제품명 and 아이디어스 링크', async ({ page }) => {
   await page.goto('/admin/qr/new')
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
-  await page.getByLabel('Google Drive 폴더 URL').fill(uniqueUrl)
-  // Navigate wizard steps 1→2→3→4→5
-  for (let i = 0; i < 4; i++) {
-    await page.getByRole('button', { name: '다음 →' }).click()
-  }
-  await page.getByRole('button', { name: '완료 — QR 생성' }).click()
+  await page.getByLabel('아이디어스 구매 링크', { exact: false }).fill(TEST_IDUS_URL)
+  await expect(page.getByRole('button', { name: 'QR 생성' })).toBeEnabled()
+})
+
+test('creating QR shows modal and 홈으로 redirects to dashboard', async ({ page }) => {
+  await page.goto('/admin/qr/new')
+  await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
+  await page.getByLabel('아이디어스 구매 링크', { exact: false }).fill(
+    `https://www.idus.com/v2/product/e2e-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  )
+  await page.getByRole('button', { name: 'QR 생성' }).click()
+  await expect(page.getByRole('heading', { name: '생성되었습니다 ✓' })).toBeVisible()
+  await page.getByRole('button', { name: '홈으로' }).click()
   await expect(page).toHaveURL('/admin/dashboard')
 })
 
-test('same Drive folder URL returns same slug', async ({ page }) => {
-  const uniqueUrl = `https://drive.google.com/drive/folders/e2e-slug-${Date.now()}`
-  let createdId: string | undefined
-
-  const res1 = await page.request.post('/api/qr', {
-    data: { name: TEST_PRODUCT_NAME, drive_folder_url: uniqueUrl },
-  })
-  expect(res1.ok()).toBeTruthy()
-  const data1 = await res1.json()
-  createdId = data1.id
-
-  const res2 = await page.request.post('/api/qr', {
-    data: { name: '다른 제품명', drive_folder_url: uniqueUrl },
-  })
-  expect(res2.ok()).toBeTruthy()
-  const data2 = await res2.json()
-
-  expect(data1.slug).toBe(data2.slug)
-  expect(data1.id).toBe(data2.id)
-
-  if (createdId) {
-    await page.request.delete(`/api/qr/${createdId}`)
-  }
-})
-
 test('/r/{slug} shows product name', async ({ page }) => {
-  const uniqueUrl = `https://drive.google.com/drive/folders/e2e-name-${Date.now()}`
-
   const createRes = await page.request.post('/api/qr', {
-    data: { name: TEST_PRODUCT_NAME, drive_folder_url: uniqueUrl },
+    data: { name: TEST_PRODUCT_NAME },
   })
   const { id, slug } = await createRes.json()
 
   await page.goto(`/r/${slug}`)
   await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
-
-  // Assert purchase button is absent when idus_url is not provided
   await expect(page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })).toHaveCount(0)
 
-  if (id) {
-    await page.request.delete(`/api/qr/${id}`)
-  }
+  if (id) await page.request.delete(`/api/qr/${id}`)
 })
 
 test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ page }) => {
-  const uniqueUrl = `https://drive.google.com/drive/folders/e2e-idus-${Date.now()}`
-
   const createRes = await page.request.post('/api/qr', {
-    data: {
-      name: TEST_PRODUCT_NAME,
-      drive_folder_url: uniqueUrl,
-      idus_url: 'https://www.idus.com/v2/product/e2e-test-id',
-    },
+    data: { name: TEST_PRODUCT_NAME, idus_url: TEST_IDUS_URL },
   })
   const { id, slug } = await createRes.json()
 
@@ -106,9 +64,7 @@ test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ 
   await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
   const link = page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })
   await expect(link).toBeVisible()
-  await expect(link).toHaveAttribute('href', 'https://www.idus.com/v2/product/e2e-test-id')
+  await expect(link).toHaveAttribute('href', TEST_IDUS_URL)
 
-  if (id) {
-    await page.request.delete(`/api/qr/${id}`)
-  }
+  if (id) await page.request.delete(`/api/qr/${id}`)
 })

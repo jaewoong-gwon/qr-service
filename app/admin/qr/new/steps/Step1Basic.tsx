@@ -7,7 +7,6 @@ const hintClass = 'text-[11px] text-brown-muted font-normal'
 
 export interface BasicData {
   name: string
-  driveUrl: string
   subtitle: string
   summary: string
   idusUrl: string
@@ -25,21 +24,6 @@ export function Step1Basic({ data, onChange }: Step1Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <label htmlFor="step1-drive-url" className={labelClass}>
-          Google Drive 폴더 URL <span className="text-gold">*</span>
-        </label>
-        <input
-          id="step1-drive-url"
-          type="url"
-          value={data.driveUrl}
-          onChange={(e) => set('driveUrl', e.target.value)}
-          placeholder="https://drive.google.com/drive/folders/..."
-          className={inputClass}
-          required
-        />
-        <p className={`mt-1.5 ${hintClass}`}>사진이 저장된 공개 Google Drive 폴더 주소를 입력하세요.</p>
-      </div>
       <div>
         <label htmlFor="step1-name" className={labelClass}>
           제품명 <span className="text-gold">*</span>
