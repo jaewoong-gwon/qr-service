@@ -33,7 +33,7 @@ test('creating QR shows modal and 홈으로 redirects to dashboard', async ({ pa
   await page.goto('/admin/qr/new')
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
   await page.getByLabel('아이디어스 구매 링크', { exact: false }).fill(
-    `https://www.idus.com/v2/product/e2e-${Date.now()}`
+    `https://www.idus.com/v2/product/e2e-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
   )
   await page.getByRole('button', { name: 'QR 생성' }).click()
   await expect(page.getByText('생성되었습니다')).toBeVisible()
