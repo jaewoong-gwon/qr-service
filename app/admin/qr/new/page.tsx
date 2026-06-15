@@ -208,6 +208,7 @@ export default function NewQrPage() {
               {/* 포커스 뱃지 — h-6 공간 항상 예약, opacity로 fade */}
               <div className="flex justify-center mb-2 h-6">
                 <span
+                  aria-hidden="true"
                   className={`text-[10px] bg-gold text-cream px-3 py-1 rounded-full font-bold transition-opacity ${
                     previewFocused ? 'opacity-100' : 'opacity-0'
                   }`}
