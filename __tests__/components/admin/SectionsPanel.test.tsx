@@ -42,13 +42,26 @@ describe('SectionsPanel (create mode)', () => {
     expect(onChange).toHaveBeenCalledWith([])
   })
 
-  it('shows item form for color_meaning type', () => {
-    const colorSection: ProductSection = {
+  it('meaning type shows 제목 input and 설명 textarea', () => {
+    render(<SectionsPanel mode="create" sections={[mockSection]} onChange={() => {}} />)
+    expect(screen.getByPlaceholderText('제목을 입력하세요')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('설명을 입력하세요')).toBeInTheDocument()
+  })
+
+  it('closing type shows only 마무리 문구 textarea (no 제목 input)', () => {
+    const closingSection: ProductSection = {
       ...mockSection,
-      section_type: 'color_meaning',
-      product_section_items: [],
+      section_type: 'closing',
     }
-    render(<SectionsPanel mode="create" sections={[colorSection]} onChange={() => {}} />)
-    expect(screen.getByRole('button', { name: '+ 아이템 추가' })).toBeInTheDocument()
+    render(<SectionsPanel mode="create" sections={[closingSection]} onChange={() => {}} />)
+    expect(screen.getByPlaceholderText('마무리 문구를 입력하세요')).toBeInTheDocument()
+    expect(screen.queryByPlaceholderText('제목을 입력하세요')).not.toBeInTheDocument()
+  })
+
+  it('type selector only shows 추가 설명 and 마무리 문구', () => {
+    render(<SectionsPanel mode="create" sections={[mockSection]} onChange={() => {}} />)
+    const select = screen.getByRole('combobox')
+    const options = Array.from((select as HTMLSelectElement).options).map((o) => o.text)
+    expect(options).toEqual(['추가 설명', '마무리 문구'])
   })
 })
