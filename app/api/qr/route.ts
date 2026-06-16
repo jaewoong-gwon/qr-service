@@ -36,7 +36,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const requestBody = await request.json()
-  const { name, subtitle, idus_url } = requestBody
+  const { name, subtitle, idus_url, store_id } = requestBody
   const tags: TagInput[] = requestBody.tags ?? []
   const sections: SectionInput[] = requestBody.sections ?? []
   const notice: NoticeInput | null = requestBody.notice ?? null
@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
     .from('products')
     .insert({
       qr_code_id: qrCode.id,
+      store_id: store_id ?? null,
       name: name.trim(),
       subtitle: subtitle ?? null,
       idus_url: idus_url ?? null,

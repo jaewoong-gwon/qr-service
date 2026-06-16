@@ -20,6 +20,7 @@ created_at: '2025-01-01T00:00:00Z',
   products: {
     id: 'p1',
     qr_code_id: '1',
+    store_id: null,
     name: '레진 갓 키링',
     subtitle: null,
     idus_url: null,

@@ -38,6 +38,7 @@ CREATE TABLE qr_codes (
 -- 매장
 CREATE TABLE stores (
   id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  admin_id   uuid        NOT NULL REFERENCES admins(id) ON DELETE CASCADE,
   name       text        NOT NULL,
   slug       text        NOT NULL UNIQUE,
   created_at timestamptz NOT NULL DEFAULT now()

@@ -1,5 +1,7 @@
 'use client'
 
+import type { Store } from '@/lib/types'
+
 const inputClass =
   'w-full bg-white border border-gold/40 rounded-lg px-3.5 py-2.5 text-sm text-brown-dark focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20'
 const labelClass = 'block text-sm font-bold text-brown-dark mb-1.5'
@@ -9,20 +11,52 @@ export interface BasicData {
   name: string
   subtitle: string
   idusUrl: string
+  storeId: string
 }
 
 interface Step1Props {
   data: BasicData
+  stores: Store[]
   onChange: (data: BasicData) => void
 }
 
-export function Step1Basic({ data, onChange }: Step1Props) {
+export function Step1Basic({ data, stores, onChange }: Step1Props) {
   function set(field: keyof BasicData, value: string) {
     onChange({ ...data, [field]: value })
   }
 
   return (
     <div className="flex flex-col gap-4">
+      <div>
+        <label htmlFor="step1-store" className={labelClass}>
+          매장 <span className="text-gold">*</span>
+        </label>
+        {stores.length === 0 ? (
+          <p className="text-sm text-red-400 bg-red-50 border border-red-200 rounded-lg px-3.5 py-2.5">
+            매장이 없습니다.{' '}
+            <a href="/admin/stores" className="underline font-semibold">
+              매장 관리
+            </a>
+            에서 먼저 등록해주세요.
+          </p>
+        ) : (
+          <select
+            id="step1-store"
+            value={data.storeId}
+            onChange={(e) => set('storeId', e.target.value)}
+            className={inputClass}
+            required
+          >
+            <option value="">매장을 선택하세요</option>
+            {stores.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+
       <div>
         <label htmlFor="step1-name" className={labelClass}>
           제품명 <span className="text-gold">*</span>
@@ -36,6 +70,7 @@ export function Step1Basic({ data, onChange }: Step1Props) {
           required
         />
       </div>
+
       <div>
         <label htmlFor="step1-subtitle" className={labelClass}>
           한 줄 카피 <span className={hintClass}>(선택 · 상단에 표시)</span>
