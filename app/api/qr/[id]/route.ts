@@ -23,14 +23,13 @@ export async function PATCH(
 ) {
   const { id } = await params
   const requestBody = await request.json()
-  const { name, subtitle, summary, idus_url } = requestBody
+  const { name, subtitle, idus_url } = requestBody
 
   const supabase = createServerSupabaseClient()
 
   const productUpdates: Record<string, string | null | boolean> = {}
   if (name !== undefined) productUpdates.name = name?.trim() ?? name
   if (subtitle !== undefined) productUpdates.subtitle = subtitle
-  if (summary !== undefined) productUpdates.summary = summary
   if (idus_url !== undefined) productUpdates.idus_url = idus_url
 
   if (Object.keys(productUpdates).length > 0) {
@@ -54,5 +53,11 @@ export async function PATCH(
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json(data)
+  // PostgREST returns one-to-many as array; normalise to single object
+  const raw = data as any
+  const normalized = {
+    ...raw,
+    products: Array.isArray(raw.products) ? (raw.products[0] ?? null) : raw.products,
+  }
+  return NextResponse.json(normalized)
 }

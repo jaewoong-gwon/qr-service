@@ -24,22 +24,7 @@ export interface ProductTag {
   sort_order: number
 }
 
-export interface ProductSectionItem {
-  id?: string
-  title: string | null
-  description: string | null
-  sort_order: number
-}
-
-export type SectionType =
-  | 'meaning'
-  | 'description'
-  | 'color_meaning'
-  | 'symbol_meaning'
-  | 'option_story'
-  | 'character_story'
-  | 'place_story'
-  | 'closing'
+export type SectionType = 'meaning' | 'closing'
 
 export interface ProductSection {
   id: string
@@ -47,7 +32,6 @@ export interface ProductSection {
   title: string | null
   body: string | null
   sort_order: number
-  product_section_items: ProductSectionItem[]
 }
 
 export interface Product {
@@ -55,7 +39,6 @@ export interface Product {
   qr_code_id: string
   name: string
   subtitle: string | null
-  summary: string | null
   idus_url: string | null
   is_active: boolean
   notice_group_id?: string | null

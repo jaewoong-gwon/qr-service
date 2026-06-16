@@ -21,7 +21,7 @@ const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
 
-const INITIAL_BASIC: BasicData = { name: '', subtitle: '', summary: '', idusUrl: '' }
+const INITIAL_BASIC: BasicData = { name: '', subtitle: '', idusUrl: '' }
 
 export default function NewQrPage() {
   const router = useRouter()
@@ -44,14 +44,13 @@ export default function NewQrPage() {
       .catch((err) => console.error('Failed to load notice groups:', err))
   }, [])
 
-  const canCreate = basic.name.trim() !== '' && basic.idusUrl.trim() !== ''
+  const canCreate = basic.name.trim() !== ''
 
   const previewProduct: Product = {
     id: '',
     qr_code_id: '',
     name: basic.name.trim() || '(제품명)',
     subtitle: basic.subtitle.trim() || null,
-    summary: basic.summary.trim() || null,
     idus_url: basic.idusUrl.trim() || null,
     is_active: true,
     product_tags: tags,
@@ -73,7 +72,6 @@ export default function NewQrPage() {
     const body = {
       name: basic.name.trim(),
       subtitle: basic.subtitle.trim() || null,
-      summary: basic.summary.trim() || null,
       idus_url: basic.idusUrl.trim() || null,
       tags: tags.map((t, i) => ({ label: t.label, sort_order: i })),
       sections: sections.map((s, i) => ({
@@ -81,11 +79,6 @@ export default function NewQrPage() {
         title: s.title,
         body: s.body,
         sort_order: i,
-        items: s.product_section_items.map((item, j) => ({
-          title: item.title,
-          description: item.description,
-          sort_order: j,
-        })),
       })),
       notice: noticeData
         ? {
@@ -154,7 +147,7 @@ export default function NewQrPage() {
               {loading ? '생성 중...' : 'QR 생성'}
             </button>
             {!canCreate && (
-              <p className="text-[10px] text-brown-muted">제품명·아이디어스 링크 입력 후 활성화</p>
+              <p className="text-[10px] text-brown-muted">제품명 입력 후 활성화</p>
             )}
           </div>
         </div>

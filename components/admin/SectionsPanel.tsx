@@ -36,7 +36,6 @@ function newSection(sortOrder: number): ProductSection {
     title: null,
     body: null,
     sort_order: sortOrder,
-    product_section_items: [],
   }
 }
 
