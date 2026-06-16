@@ -44,7 +44,7 @@ export default function NewQrPage() {
       .catch((err) => console.error('Failed to load notice groups:', err))
   }, [])
 
-  const canCreate = basic.name.trim() !== '' && basic.idusUrl.trim() !== ''
+  const canCreate = basic.name.trim() !== ''
 
   const previewProduct: Product = {
     id: '',
@@ -147,7 +147,7 @@ export default function NewQrPage() {
               {loading ? '생성 중...' : 'QR 생성'}
             </button>
             {!canCreate && (
-              <p className="text-[10px] text-brown-muted">제품명·아이디어스 링크 입력 후 활성화</p>
+              <p className="text-[10px] text-brown-muted">제품명 입력 후 활성화</p>
             )}
           </div>
         </div>
