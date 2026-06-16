@@ -4,13 +4,11 @@ import { generateSlug } from '@/lib/qr'
 import type { SectionType } from '@/lib/types'
 
 interface TagInput { label: string; sort_order: number }
-interface ItemInput { title: string | null; description: string | null; sort_order: number }
 interface SectionInput {
   section_type: SectionType
   title: string | null
   body: string | null
   sort_order: number
-  items: ItemInput[]
 }
 interface NoticeInput {
   group_id: string | null
@@ -33,7 +31,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const requestBody = await request.json()
-  const { name, subtitle, summary, idus_url } = requestBody
+  const { name, subtitle, idus_url } = requestBody
   const tags: TagInput[] = requestBody.tags ?? []
   const sections: SectionInput[] = requestBody.sections ?? []
   const notice: NoticeInput | null = requestBody.notice ?? null
@@ -86,7 +84,6 @@ export async function POST(request: NextRequest) {
       qr_code_id: qrCode.id,
       name: name.trim(),
       subtitle: subtitle ?? null,
-      summary: summary ?? null,
       idus_url: idus_url ?? null,
       is_active: true,
       notice_group_id: noticeGroupId,
@@ -108,24 +105,13 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // 4. Insert sections + items
-  for (const section of sections) {
-    const { items, ...sectionData } = section
-    const { data: sec, error: secError } = await supabase
-      .from('product_sections')
-      .insert({ ...sectionData, product_id: product.id })
-      .select()
-      .single()
-    if (secError || !sec) {
-      return NextResponse.json({ error: secError?.message ?? '섹션 생성 실패' }, { status: 500 })
-    }
-    if (items.length > 0) {
-      const { error: itemsError } = await supabase.from('product_section_items').insert(
-        items.map((item: ItemInput) => ({ ...item, section_id: sec.id }))
-      )
-      if (itemsError) {
-        return NextResponse.json({ error: itemsError.message ?? '섹션 아이템 생성 실패' }, { status: 500 })
-      }
+  // 4. Insert sections
+  if (sections.length > 0) {
+    const { error: secError } = await supabase.from('product_sections').insert(
+      sections.map((s) => ({ ...s, product_id: product.id }))
+    )
+    if (secError) {
+      return NextResponse.json({ error: secError.message ?? '섹션 생성 실패' }, { status: 500 })
     }
   }
 

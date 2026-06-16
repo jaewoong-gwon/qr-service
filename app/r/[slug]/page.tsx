@@ -19,10 +19,7 @@ export default async function ProductPage({
         *,
         product_tags ( label, sort_order ),
         notice_groups ( notice_group_items ( content, sort_order ) ),
-        product_sections (
-          *,
-          product_section_items ( title, description, sort_order )
-        )
+        product_sections ( * )
       )
     `)
     .eq('slug', slug)

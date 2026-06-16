@@ -10,7 +10,6 @@ const mockSection: ProductSection = {
   title: '갓의 의미',
   body: '조선시대...',
   sort_order: 0,
-  product_section_items: [],
 }
 
 describe('SectionsPanel (create mode)', () => {

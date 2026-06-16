@@ -36,7 +36,6 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
 
   const [name, setName] = useState(p?.name ?? '')
   const [subtitle, setSubtitle] = useState(p?.subtitle ?? '')
-  const [summary, setSummary] = useState(p?.summary ?? '')
   const [idusUrl, setIdusUrl] = useState(p?.idus_url ?? '')
 
   const [tags, setTags] = useState<(ProductTag & { id: string })[]>(
@@ -55,7 +54,6 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
     qr_code_id: item.id,
     name: name.trim() || '(제품명)',
     subtitle: subtitle.trim() || null,
-    summary: summary.trim() || null,
     idus_url: idusUrl.trim() || null,
     is_active: p?.is_active ?? true,
     product_tags: tags,
@@ -73,7 +71,6 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
         body: JSON.stringify({
           name: name.trim(),
           subtitle: subtitle.trim() || null,
-          summary: summary.trim() || null,
           idus_url: idusUrl.trim() || null,
         }),
       })
@@ -161,18 +158,7 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
                       className={inputClass}
                     />
                   </div>
-                  <div>
-                    <label className={labelClass}>
-                      요약 <span className={hintClass}>(hero 영역 하단 짧은 문단)</span>
-                    </label>
-                    <textarea
-                      value={summary}
-                      onChange={(e) => setSummary(e.target.value)}
-                      rows={2}
-                      placeholder="제품에 대한 짧은 요약 문장"
-                      className={`${inputClass} resize-none`}
-                    />
-                  </div>
+
                   <div>
                     <label className={labelClass}>아이디어스 구매 링크</label>
                     <input

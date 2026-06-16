@@ -1,6 +1,5 @@
 import type { Product } from '@/lib/types'
 import { SectionCard } from '@/components/sections/SectionCard'
-import { ItemGridCard } from '@/components/sections/ItemGridCard'
 
 interface ProductLandingPageProps {
   product: Product | null
@@ -49,9 +48,7 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
             ))}
           </div>
         )}
-        {product.summary && (
-          <p className="text-sm text-brown-mid mt-3 leading-relaxed">{product.summary}</p>
-        )}
+
       </div>
 
       <div className="flex flex-col gap-3 px-4 py-4">
@@ -74,16 +71,7 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
 
         {/* 동적 섹션: section_type에 따라 카드 분기 */}
         {sections.map((section) => {
-          // skip sections with no renderable content
-          if (!section.title && !section.body && section.product_section_items.length === 0) {
-            return null
-          }
-          if (
-            section.section_type === 'color_meaning' ||
-            section.section_type === 'symbol_meaning'
-          ) {
-            return <ItemGridCard key={section.id} section={section} />
-          }
+          if (!section.title && !section.body) return null
           return <SectionCard key={section.id} section={section} />
         })}
 

@@ -10,7 +10,6 @@ const meaning: ProductSection = {
   title: '갓의 의미',
   body: '조선시대 선비들이 착용하던 전통 모자입니다.',
   sort_order: 0,
-  product_section_items: [],
 }
 
 const closing: ProductSection = {
@@ -19,7 +18,6 @@ const closing: ProductSection = {
   title: null,
   body: '작지만 오래 간직할 수 있는 전통의 가치',
   sort_order: 1,
-  product_section_items: [],
 }
 
 describe('SectionCard', () => {

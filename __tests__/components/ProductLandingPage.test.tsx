@@ -9,7 +9,6 @@ const base: Product = {
   qr_code_id: 'qr1',
   name: '레진 갓 키링',
   subtitle: '전통의 아름다움을 일상 속에',
-  summary: null,
   idus_url: 'https://www.idus.com/v2/product/abc',
   is_active: true,
   product_tags: [
@@ -28,7 +27,6 @@ const base: Product = {
       title: '갓의 의미',
       body: '한국 전통 갓의 우아한 선을 담았습니다.',
       sort_order: 0,
-      product_section_items: [],
     },
     {
       id: 's2',
@@ -36,7 +34,6 @@ const base: Product = {
       title: null,
       body: '작지만 오래 간직할 수 있는 전통의 가치',
       sort_order: 1,
-      product_section_items: [],
     },
   ],
 }

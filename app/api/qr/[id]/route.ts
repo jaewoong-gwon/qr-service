@@ -23,14 +23,13 @@ export async function PATCH(
 ) {
   const { id } = await params
   const requestBody = await request.json()
-  const { name, subtitle, summary, idus_url } = requestBody
+  const { name, subtitle, idus_url } = requestBody
 
   const supabase = createServerSupabaseClient()
 
   const productUpdates: Record<string, string | null | boolean> = {}
   if (name !== undefined) productUpdates.name = name?.trim() ?? name
   if (subtitle !== undefined) productUpdates.subtitle = subtitle
-  if (summary !== undefined) productUpdates.summary = summary
   if (idus_url !== undefined) productUpdates.idus_url = idus_url
 
   if (Object.keys(productUpdates).length > 0) {

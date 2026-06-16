@@ -20,10 +20,7 @@ export default async function EditPage({
           *,
           product_tags ( id, label, sort_order ),
           notice_groups ( id, name, notice_group_items ( id, content, sort_order ) ),
-          product_sections (
-            *,
-            product_section_items ( id, title, description, sort_order )
-          )
+          product_sections ( * )
         )
       `)
       .eq('id', id)

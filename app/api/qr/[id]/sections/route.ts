@@ -34,5 +34,5 @@ export async function POST(
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json({ ...data, product_section_items: [] }, { status: 201 })
+  return NextResponse.json(data, { status: 201 })
 }

@@ -8,7 +8,6 @@ const hintClass = 'text-[11px] text-brown-muted font-normal'
 export interface BasicData {
   name: string
   subtitle: string
-  summary: string
   idusUrl: string
 }
 
@@ -49,19 +48,7 @@ export function Step1Basic({ data, onChange }: Step1Props) {
           className={inputClass}
         />
       </div>
-      <div>
-        <label htmlFor="step1-summary" className={labelClass}>
-          요약 <span className={hintClass}>(선택 · hero 하단)</span>
-        </label>
-        <textarea
-          id="step1-summary"
-          value={data.summary}
-          onChange={(e) => set('summary', e.target.value)}
-          rows={2}
-          placeholder="제품에 대한 짧은 요약 문장"
-          className={`${inputClass} resize-none`}
-        />
-      </div>
+
       <div>
         <label htmlFor="step1-idus-url" className={labelClass}>
           아이디어스 구매 링크 <span className={hintClass}>(권장)</span>
