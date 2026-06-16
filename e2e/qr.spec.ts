@@ -49,10 +49,16 @@ test('/r/{slug} shows product name', async ({ page }) => {
   const createRes = await page.request.post('/api/qr', {
     data: { name: TEST_PRODUCT_NAME },
   })
-  const { id, slug } = await createRes.json()
+  const resBody = await createRes.text()
+  expect(createRes.status(), `POST /api/qr 실패 (${createRes.status()}): ${resBody}`).toBe(201)
+  const { id, slug } = JSON.parse(resBody)
+  expect(slug, `slug 없음 — 응답: ${resBody}`).toBeTruthy()
 
-  await page.goto(`/r/${slug}`)
-  await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
+  const navRes = await page.goto(`/r/${slug}`)
+  const pageBody = await page.locator('body').innerText()
+  expect(navRes?.status(), `페이지 상태 비정상 — body: ${pageBody.slice(0, 300)}`).toBe(200)
+
+  await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME }), `본문: ${pageBody.slice(0, 300)}`).toBeVisible()
   await expect(page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })).toHaveCount(0)
 
   if (id) await page.request.delete(`/api/qr/${id}`)
@@ -62,10 +68,16 @@ test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ 
   const createRes = await page.request.post('/api/qr', {
     data: { name: TEST_PRODUCT_NAME, idus_url: TEST_IDUS_URL },
   })
-  const { id, slug } = await createRes.json()
+  const resBody = await createRes.text()
+  expect(createRes.status(), `POST /api/qr 실패 (${createRes.status()}): ${resBody}`).toBe(201)
+  const { id, slug } = JSON.parse(resBody)
+  expect(slug, `slug 없음 — 응답: ${resBody}`).toBeTruthy()
 
-  await page.goto(`/r/${slug}`)
-  await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME })).toBeVisible()
+  const navRes = await page.goto(`/r/${slug}`)
+  const pageBody = await page.locator('body').innerText()
+  expect(navRes?.status(), `페이지 상태 비정상 — body: ${pageBody.slice(0, 300)}`).toBe(200)
+
+  await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME }), `본문: ${pageBody.slice(0, 300)}`).toBeVisible()
   const link = page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })
   await expect(link).toBeVisible()
   await expect(link).toHaveAttribute('href', TEST_IDUS_URL)
