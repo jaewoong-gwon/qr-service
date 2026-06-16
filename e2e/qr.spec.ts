@@ -38,11 +38,13 @@ test('creating QR shows modal and 홈으로 redirects to dashboard', async ({ pa
   ])
   const { id: createdId } = await response.json()
 
-  await expect(page.getByRole('heading', { name: '생성되었습니다 ✓' })).toBeVisible()
-  await page.getByRole('button', { name: '홈으로' }).click()
-  await expect(page).toHaveURL('/admin/dashboard')
-
-  if (createdId) await page.request.delete(`/api/qr/${createdId}`)
+  try {
+    await expect(page.getByRole('heading', { name: '생성되었습니다 ✓' })).toBeVisible()
+    await page.getByRole('button', { name: '홈으로' }).click()
+    await expect(page).toHaveURL('/admin/dashboard')
+  } finally {
+    if (createdId) await page.request.delete(`/api/qr/${createdId}`)
+  }
 })
 
 test('/r/{slug} shows product name', async ({ page }) => {
@@ -54,14 +56,15 @@ test('/r/{slug} shows product name', async ({ page }) => {
   const { id, slug } = JSON.parse(resBody)
   expect(slug, `slug 없음 — 응답: ${resBody}`).toBeTruthy()
 
-  const navRes = await page.goto(`/r/${slug}`)
-  const pageBody = await page.locator('body').innerText()
-  expect(navRes?.status(), `페이지 상태 비정상 — body: ${pageBody.slice(0, 300)}`).toBe(200)
-
-  await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME }), `본문: ${pageBody.slice(0, 300)}`).toBeVisible()
-  await expect(page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })).toHaveCount(0)
-
-  if (id) await page.request.delete(`/api/qr/${id}`)
+  try {
+    const navRes = await page.goto(`/r/${slug}`)
+    const pageBody = await page.locator('body').innerText()
+    expect(navRes?.status(), `페이지 상태 비정상 — body: ${pageBody.slice(0, 300)}`).toBe(200)
+    await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME }), `본문: ${pageBody.slice(0, 300)}`).toBeVisible()
+    await expect(page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })).toHaveCount(0)
+  } finally {
+    if (id) await page.request.delete(`/api/qr/${id}`)
+  }
 })
 
 test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ page }) => {
@@ -73,14 +76,15 @@ test('/r/{slug} shows idus purchase button when idus_url is provided', async ({ 
   const { id, slug } = JSON.parse(resBody)
   expect(slug, `slug 없음 — 응답: ${resBody}`).toBeTruthy()
 
-  const navRes = await page.goto(`/r/${slug}`)
-  const pageBody = await page.locator('body').innerText()
-  expect(navRes?.status(), `페이지 상태 비정상 — body: ${pageBody.slice(0, 300)}`).toBe(200)
-
-  await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME }), `본문: ${pageBody.slice(0, 300)}`).toBeVisible()
-  const link = page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })
-  await expect(link).toBeVisible()
-  await expect(link).toHaveAttribute('href', TEST_IDUS_URL)
-
-  if (id) await page.request.delete(`/api/qr/${id}`)
+  try {
+    const navRes = await page.goto(`/r/${slug}`)
+    const pageBody = await page.locator('body').innerText()
+    expect(navRes?.status(), `페이지 상태 비정상 — body: ${pageBody.slice(0, 300)}`).toBe(200)
+    await expect(page.getByRole('heading', { name: TEST_PRODUCT_NAME }), `본문: ${pageBody.slice(0, 300)}`).toBeVisible()
+    const link = page.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })
+    await expect(link).toBeVisible()
+    await expect(link).toHaveAttribute('href', TEST_IDUS_URL)
+  } finally {
+    if (id) await page.request.delete(`/api/qr/${id}`)
+  }
 })
