@@ -53,5 +53,11 @@ export async function PATCH(
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json(data)
+  // PostgREST returns one-to-many as array; normalise to single object
+  const raw = data as any
+  const normalized = {
+    ...raw,
+    products: Array.isArray(raw.products) ? (raw.products[0] ?? null) : raw.products,
+  }
+  return NextResponse.json(normalized)
 }

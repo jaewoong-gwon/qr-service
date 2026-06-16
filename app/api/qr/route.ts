@@ -26,7 +26,12 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json(data)
+  // PostgREST returns one-to-many as array; normalise to single object
+  const normalized = (data ?? []).map((item: any) => ({
+    ...item,
+    products: Array.isArray(item.products) ? (item.products[0] ?? null) : item.products,
+  }))
+  return NextResponse.json(normalized)
 }
 
 export async function POST(request: NextRequest) {

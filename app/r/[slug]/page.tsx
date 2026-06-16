@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { ProductLandingPage } from '@/components/ProductLandingPage'
-import type { QrCodeWithProduct } from '@/lib/types'
+import type { Product } from '@/lib/types'
 
 export default async function ProductPage({
   params,
@@ -28,7 +28,9 @@ export default async function ProductPage({
   if (error && error.code !== 'PGRST116') throw new Error(error.message)
   if (!qrCode) notFound()
 
-  const item = qrCode as unknown as QrCodeWithProduct
+  // PostgREST returns one-to-many as array; take first element
+  const raw = qrCode as any
+  const product = (Array.isArray(raw.products) ? raw.products[0] ?? null : raw.products) as Product | null
 
-  return <ProductLandingPage product={item.products} />
+  return <ProductLandingPage product={product} />
 }

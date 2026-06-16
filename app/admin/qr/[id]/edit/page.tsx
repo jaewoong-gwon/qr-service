@@ -34,7 +34,12 @@ export default async function EditPage({
   if (error && error.code !== 'PGRST116') throw new Error(error.message)
   if (!data) notFound()
 
-  const item = data as unknown as QrCodeWithProduct
+  // PostgREST returns one-to-many as array; take first element
+  const raw = data as any
+  const item: QrCodeWithProduct = {
+    ...raw,
+    products: Array.isArray(raw.products) ? (raw.products[0] ?? null) : raw.products,
+  }
   const groups = (allGroups ?? []) as unknown as (NoticeGroup & { id: string; name: string })[]
 
   return <EditClient item={item} allNoticeGroups={groups} />
