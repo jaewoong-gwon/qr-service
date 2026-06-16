@@ -10,6 +10,7 @@
 -- ─────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS _backup_admins               AS SELECT * FROM admins;
 CREATE TABLE IF NOT EXISTS _backup_qr_codes             AS SELECT * FROM qr_codes;
+CREATE TABLE IF NOT EXISTS _backup_stores               AS SELECT * FROM stores;
 CREATE TABLE IF NOT EXISTS _backup_products             AS SELECT * FROM products;
 CREATE TABLE IF NOT EXISTS _backup_notice_groups        AS SELECT * FROM notice_groups;
 CREATE TABLE IF NOT EXISTS _backup_notice_group_items   AS SELECT * FROM notice_group_items;
@@ -24,6 +25,7 @@ DROP TABLE IF EXISTS product_tags       CASCADE;
 DROP TABLE IF EXISTS notice_group_items CASCADE;
 DROP TABLE IF EXISTS products           CASCADE;
 DROP TABLE IF EXISTS notice_groups      CASCADE;
+DROP TABLE IF EXISTS stores             CASCADE;
 DROP TABLE IF EXISTS qr_codes           CASCADE;
 DROP TABLE IF EXISTS admins             CASCADE;
 
@@ -46,6 +48,14 @@ CREATE TABLE qr_codes (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- 매장
+CREATE TABLE stores (
+  id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       text        NOT NULL,
+  slug       text        NOT NULL UNIQUE,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
 -- 구매 전 확인사항 공통 그룹
 CREATE TABLE notice_groups (
   id   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -56,6 +66,7 @@ CREATE TABLE notice_groups (
 CREATE TABLE products (
   id               uuid    PRIMARY KEY DEFAULT gen_random_uuid(),
   qr_code_id       uuid    NOT NULL REFERENCES qr_codes(id) ON DELETE CASCADE,
+  store_id         uuid    REFERENCES stores(id) ON DELETE SET NULL,
   name             text    NOT NULL,
   subtitle         text,
   idus_url         text,
