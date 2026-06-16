@@ -10,7 +10,7 @@ import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
 import { SaveCompleteModal } from '@/components/admin/SaveCompleteModal'
 import type { NoticeFormData } from '@/components/admin/NoticePanel'
-import type { Product, ProductTag, ProductSection, NoticeGroup } from '@/lib/types'
+import type { Product, ProductTag, ProductSection, NoticeGroup, Store } from '@/lib/types'
 
 const PREVIEW_SCALE = 0.923
 const INNER_W = 390
@@ -21,12 +21,13 @@ const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
 
-const INITIAL_BASIC: BasicData = { name: '', subtitle: '', idusUrl: '' }
+const INITIAL_BASIC: BasicData = { name: '', subtitle: '', idusUrl: '', storeId: '' }
 
 export default function NewQrPage() {
   const router = useRouter()
   const [tab, setTab] = useState<Tab>('기본 정보')
   const [basic, setBasic] = useState<BasicData>(INITIAL_BASIC)
+  const [stores, setStores] = useState<Store[]>([])
   const [tags, setTags] = useState<ProductTag[]>([])
   const [sections, setSections] = useState<ProductSection[]>([])
   const [noticeData, setNoticeData] = useState<NoticeFormData | null>(null)
@@ -38,17 +39,21 @@ export default function NewQrPage() {
   const [previewFocused, setPreviewFocused] = useState(false)
 
   useEffect(() => {
-    fetch('/api/notice-groups')
-      .then((r) => r.json())
-      .then((data) => { if (Array.isArray(data)) setNoticeGroups(data) })
-      .catch((err) => console.error('Failed to load notice groups:', err))
+    Promise.all([
+      fetch('/api/notice-groups').then((r) => r.json()),
+      fetch('/api/stores').then((r) => r.json()),
+    ]).then(([groups, storeList]) => {
+      if (Array.isArray(groups)) setNoticeGroups(groups)
+      if (Array.isArray(storeList)) setStores(storeList)
+    }).catch((err) => console.error('Failed to load data:', err))
   }, [])
 
-  const canCreate = basic.name.trim() !== ''
+  const canCreate = basic.name.trim() !== '' && basic.storeId !== ''
 
   const previewProduct: Product = {
     id: '',
     qr_code_id: '',
+    store_id: basic.storeId || null,
     name: basic.name.trim() || '(제품명)',
     subtitle: basic.subtitle.trim() || null,
     idus_url: basic.idusUrl.trim() || null,
@@ -73,6 +78,7 @@ export default function NewQrPage() {
       name: basic.name.trim(),
       subtitle: basic.subtitle.trim() || null,
       idus_url: basic.idusUrl.trim() || null,
+      store_id: basic.storeId || null,
       tags: tags.map((t, i) => ({ label: t.label, sort_order: i })),
       sections: sections.map((s, i) => ({
         section_type: s.section_type,
@@ -147,7 +153,7 @@ export default function NewQrPage() {
               {loading ? '생성 중...' : 'QR 생성'}
             </button>
             {!canCreate && (
-              <p className="text-[10px] text-brown-muted">제품명 입력 후 활성화</p>
+              <p className="text-[10px] text-brown-muted">매장·제품명 선택 후 활성화</p>
             )}
           </div>
         </div>
@@ -159,7 +165,7 @@ export default function NewQrPage() {
           <div className="flex-1 min-w-0">
             <div className="bg-cream border border-gold/40 rounded-xl px-6 py-6">
               <p className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-5">{tab}</p>
-              {tab === '기본 정보' && <Step1Basic data={basic} onChange={setBasic} />}
+              {tab === '기본 정보' && <Step1Basic data={basic} stores={stores} onChange={setBasic} />}
               {tab === '구매 안내' && (
                 <div>
                   <p className="text-xs text-brown-muted mb-4">

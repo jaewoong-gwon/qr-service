@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import { EditClient } from './EditClient'
-import type { QrCodeWithProduct, NoticeGroup } from '@/lib/types'
+import type { QrCodeWithProduct, NoticeGroup, Store } from '@/lib/types'
 
 export default async function EditPage({
   params,
@@ -11,7 +11,7 @@ export default async function EditPage({
   const { id } = await params
   const supabase = createServerSupabaseClient()
 
-  const [{ data, error }, { data: allGroups }] = await Promise.all([
+  const [{ data, error }, { data: allGroups }, { data: allStores }] = await Promise.all([
     supabase
       .from('qr_codes')
       .select(`
@@ -29,6 +29,10 @@ export default async function EditPage({
       .from('notice_groups')
       .select('id, name, notice_group_items ( id, content, sort_order )')
       .order('name'),
+    supabase
+      .from('stores')
+      .select('id, name, slug, created_at, admin_id')
+      .order('created_at', { ascending: true }),
   ])
 
   if (error && error.code !== 'PGRST116') throw new Error(error.message)
@@ -41,6 +45,7 @@ export default async function EditPage({
     products: Array.isArray(raw.products) ? (raw.products[0] ?? null) : raw.products,
   }
   const groups = (allGroups ?? []) as unknown as (NoticeGroup & { id: string; name: string })[]
+  const stores = (allStores ?? []) as unknown as Store[]
 
-  return <EditClient item={item} allNoticeGroups={groups} />
+  return <EditClient item={item} allNoticeGroups={groups} stores={stores} />
 }

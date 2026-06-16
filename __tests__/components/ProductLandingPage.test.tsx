@@ -7,6 +7,7 @@ import type { Product } from '@/lib/types'
 const base: Product = {
   id: 'p1',
   qr_code_id: 'qr1',
+  store_id: null,
   name: '레진 갓 키링',
   subtitle: '전통의 아름다움을 일상 속에',
   idus_url: 'https://www.idus.com/v2/product/abc',

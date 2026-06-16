@@ -26,6 +26,12 @@ export default async function DashboardPage() {
           </div>
           <div className="flex gap-2 items-center">
             <Link
+              href="/admin/stores"
+              className="text-sm text-brown-light border border-gold/40 rounded-md px-4 py-2 hover:bg-gold/10 transition-colors"
+            >
+              매장 관리
+            </Link>
+            <Link
               href="/admin/qr/new"
               className="bg-gold text-cream text-sm font-semibold px-4 py-2 rounded-md hover:bg-gold/90 transition-colors"
             >

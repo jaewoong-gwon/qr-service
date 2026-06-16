@@ -1,6 +1,6 @@
 // lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
-import type { QrCode, Product } from '@/lib/types'
+import type { QrCode, Product, Store } from '@/lib/types'
 
 interface Admin {
   id: string
@@ -46,6 +46,12 @@ type Database = {
         Row: { id: string; product_id: string; section_type: string; title: string | null; body: string | null; sort_order: number } & Record<string, unknown>
         Insert: { product_id: string; section_type: string; title?: string | null; body?: string | null; sort_order?: number } & Record<string, unknown>
         Update: Partial<{ section_type: string; title: string | null; body: string | null; sort_order: number }> & Record<string, unknown>
+        Relationships: []
+      }
+      stores: {
+        Row: Store & Record<string, unknown>
+        Insert: Omit<Store, 'id' | 'created_at'> & Record<string, unknown>
+        Update: Partial<Omit<Store, 'id' | 'created_at'>> & Record<string, unknown>
         Relationships: []
       }
       admins: {

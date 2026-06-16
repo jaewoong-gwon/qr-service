@@ -8,11 +8,12 @@ import { TagsPanel } from '@/components/admin/TagsPanel'
 import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
 import { SaveCompleteModal } from '@/components/admin/SaveCompleteModal'
-import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup } from '@/lib/types'
+import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup, Store } from '@/lib/types'
 
 interface EditClientProps {
   item: QrCodeWithProduct
   allNoticeGroups: (NoticeGroup & { id: string; name: string })[]
+  stores: Store[]
 }
 
 const inputClass =
@@ -29,7 +30,7 @@ const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
 
-export function EditClient({ item, allNoticeGroups }: EditClientProps) {
+export function EditClient({ item, allNoticeGroups, stores }: EditClientProps) {
   const router = useRouter()
   const p = item.products
   const [tab, setTab] = useState<Tab>('기본 정보')
@@ -37,6 +38,7 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
   const [name, setName] = useState(p?.name ?? '')
   const [subtitle, setSubtitle] = useState(p?.subtitle ?? '')
   const [idusUrl, setIdusUrl] = useState(p?.idus_url ?? '')
+  const [storeId, setStoreId] = useState(p?.store_id ?? '')
 
   const [tags, setTags] = useState<(ProductTag & { id: string })[]>(
     (p?.product_tags ?? []) as (ProductTag & { id: string })[]
@@ -52,6 +54,7 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
   const previewProduct: Product = {
     id: p?.id ?? '',
     qr_code_id: item.id,
+    store_id: storeId || null,
     name: name.trim() || '(제품명)',
     subtitle: subtitle.trim() || null,
     idus_url: idusUrl.trim() || null,
@@ -72,6 +75,7 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
           name: name.trim(),
           subtitle: subtitle.trim() || null,
           idus_url: idusUrl.trim() || null,
+          store_id: storeId || null,
         }),
       })
       setSaving(false)
@@ -136,6 +140,33 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
 
               {tab === '기본 정보' && (
                 <div className="flex flex-col gap-4">
+                  <div>
+                    <label className={labelClass}>
+                      매장 <span className="text-gold">*</span>
+                    </label>
+                    {stores.length === 0 ? (
+                      <p className="text-sm text-red-400 bg-red-50 border border-red-200 rounded-lg px-3.5 py-2.5">
+                        매장이 없습니다.{' '}
+                        <a href="/admin/stores" className="underline font-semibold">
+                          매장 관리
+                        </a>
+                        에서 먼저 등록해주세요.
+                      </p>
+                    ) : (
+                      <select
+                        value={storeId}
+                        onChange={(e) => setStoreId(e.target.value)}
+                        className={inputClass}
+                      >
+                        <option value="">매장을 선택하세요</option>
+                        {stores.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
                   <div>
                     <label className={labelClass}>
                       제품명 <span className="text-gold">*</span>

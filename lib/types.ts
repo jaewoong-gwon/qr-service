@@ -1,9 +1,17 @@
 // lib/types.ts — FINAL
 
+export interface Store {
+  id: string
+  admin_id: string
+  name: string
+  slug: string
+  created_at: string
+}
+
 export interface QrCode {
   id: string
   slug: string
-created_at: string
+  created_at: string
 }
 
 export interface NoticeGroupItem {
@@ -37,6 +45,7 @@ export interface ProductSection {
 export interface Product {
   id: string
   qr_code_id: string
+  store_id: string | null
   name: string
   subtitle: string | null
   idus_url: string | null
