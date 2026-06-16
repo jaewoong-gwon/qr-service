@@ -1,9 +1,17 @@
 // e2e/qr.spec.ts
 // Auth cookie is injected via globalSetup (JWT_SECRET) — no login credentials needed.
+// Test store is created by globalSetup and cleaned up by globalTeardown.
 import { test, expect } from '@playwright/test'
+import * as fs from 'fs'
+import * as path from 'path'
 
 const TEST_PRODUCT_NAME = 'E2E Test Product'
 const TEST_IDUS_URL = 'https://www.idus.com/v2/product/e2e-test-id'
+
+function getTestStoreId(): string {
+  const file = path.join('e2e', '.auth', 'test-store.json')
+  return JSON.parse(fs.readFileSync(file, 'utf-8')).id
+}
 
 test('can access /admin/qr/new when authenticated', async ({ page }) => {
   await page.goto('/admin/qr/new')
@@ -22,14 +30,18 @@ test('QR 생성 button is disabled without required fields', async ({ page }) =>
   await expect(page.getByRole('button', { name: 'QR 생성' })).toBeDisabled()
 })
 
-test('QR 생성 button activates after filling 제품명', async ({ page }) => {
+test('QR 생성 button activates after filling 매장 and 제품명', async ({ page }) => {
+  const storeId = getTestStoreId()
   await page.goto('/admin/qr/new')
+  await page.selectOption('#step1-store', storeId)
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
   await expect(page.getByRole('button', { name: 'QR 생성' })).toBeEnabled()
 })
 
 test('creating QR shows modal and 홈으로 redirects to dashboard', async ({ page }) => {
+  const storeId = getTestStoreId()
   await page.goto('/admin/qr/new')
+  await page.selectOption('#step1-store', storeId)
   await page.getByLabel('제품명').fill(TEST_PRODUCT_NAME)
 
   const [response] = await Promise.all([
