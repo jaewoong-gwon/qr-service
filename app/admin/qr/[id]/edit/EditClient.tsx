@@ -207,6 +207,7 @@ export function EditClient({ item, allNoticeGroups }: EditClientProps) {
                   mode="edit"
                   tags={tags}
                   qrId={item.id}
+                  productId={p?.id ?? ''}
                   onUpdate={setTags}
                 />
               )}
