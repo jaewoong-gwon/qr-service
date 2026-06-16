@@ -7,15 +7,13 @@ interface SectionCardProps {
 export function SectionCard({ section }: SectionCardProps) {
   if (section.section_type === 'closing') {
     return (
-      <div className="bg-cream rounded-2xl px-5 py-5 text-center">
+      <div className="bg-cream rounded-2xl px-5 py-6 text-center">
         {section.title && (
-          <p className="text-xs text-gold font-bold tracking-[2px] uppercase mb-3">{section.title}</p>
+          <p className="text-[10px] text-gold font-bold tracking-[2px] uppercase mb-3">{section.title}</p>
         )}
         {section.body && (
-          <p className="text-xl font-semibold text-brown-dark leading-snug">
-            <span className="text-gold text-3xl leading-none">&ldquo;&nbsp;</span>
+          <p className="text-[17px] font-bold text-brown-dark leading-[1.7]">
             {section.body}
-            <span className="text-gold">&rdquo;</span>
           </p>
         )}
       </div>
@@ -25,10 +23,12 @@ export function SectionCard({ section }: SectionCardProps) {
   return (
     <div className="bg-cream rounded-2xl px-5 py-5">
       {section.title && (
-        <p className="font-bold text-brown-dark text-base mb-3">{section.title}</p>
+        <p className="text-[13px] font-bold text-brown-dark border-l-[3px] border-gold pl-[9px] mb-[10px] leading-snug">
+          {section.title}
+        </p>
       )}
       {section.body && (
-        <p className="text-sm text-brown-dark leading-relaxed">{section.body}</p>
+        <p className="text-[14px] text-brown-dark leading-[1.75]">{section.body}</p>
       )}
     </div>
   )
