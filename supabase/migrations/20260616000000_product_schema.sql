@@ -1,24 +1,11 @@
 -- =====================================================
 -- 전체 리셋 스크립트
--- 1단계: 기존 데이터 백업
--- 2단계: 테이블 전체 삭제
--- 3단계: 최신 스키마로 재생성
+-- 1단계: 테이블 전체 삭제 (FK 의존 순서대로)
+-- 2단계: 최신 스키마로 재생성
 -- =====================================================
 
 -- ─────────────────────────────────────────────────────
--- 1. 데이터 백업 (실행 전 이미 존재하는 테이블만 백업)
--- ─────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS _backup_admins               AS SELECT * FROM admins;
-CREATE TABLE IF NOT EXISTS _backup_qr_codes             AS SELECT * FROM qr_codes;
-CREATE TABLE IF NOT EXISTS _backup_stores               AS SELECT * FROM stores;
-CREATE TABLE IF NOT EXISTS _backup_products             AS SELECT * FROM products;
-CREATE TABLE IF NOT EXISTS _backup_notice_groups        AS SELECT * FROM notice_groups;
-CREATE TABLE IF NOT EXISTS _backup_notice_group_items   AS SELECT * FROM notice_group_items;
-CREATE TABLE IF NOT EXISTS _backup_product_tags         AS SELECT * FROM product_tags;
-CREATE TABLE IF NOT EXISTS _backup_product_sections     AS SELECT * FROM product_sections;
-
--- ─────────────────────────────────────────────────────
--- 2. 테이블 전체 삭제 (FK 의존 순서대로)
+-- 1. 테이블 전체 삭제 (FK 의존 순서대로)
 -- ─────────────────────────────────────────────────────
 DROP TABLE IF EXISTS product_sections   CASCADE;
 DROP TABLE IF EXISTS product_tags       CASCADE;
@@ -30,7 +17,7 @@ DROP TABLE IF EXISTS qr_codes           CASCADE;
 DROP TABLE IF EXISTS admins             CASCADE;
 
 -- ─────────────────────────────────────────────────────
--- 3. 테이블 재생성
+-- 2. 테이블 재생성
 -- ─────────────────────────────────────────────────────
 
 -- 관리자 계정
