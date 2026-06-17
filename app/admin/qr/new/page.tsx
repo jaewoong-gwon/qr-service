@@ -68,7 +68,9 @@ export default function NewQrPage() {
               sort_order: i,
             })),
           }
-        : null,
+        : noticeData?.mode === 'existing' && noticeData.groupId
+          ? (noticeGroups.find((g) => g.id === noticeData.groupId) ?? null)
+          : null,
   }
 
   async function handleCreate() {
