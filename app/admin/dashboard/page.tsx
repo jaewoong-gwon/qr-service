@@ -14,7 +14,11 @@ export default async function DashboardPage() {
     .select('*, products(*)')
     .order('created_at', { ascending: false })
 
-  const items = (data as unknown as QrCodeWithProduct[]) ?? []
+  // PostgREST returns one-to-many as array; normalise to single object
+  const items = (data ?? []).map((item: any) => ({
+    ...item,
+    products: Array.isArray(item.products) ? (item.products[0] ?? null) : item.products,
+  })) as QrCodeWithProduct[]
 
   return (
     <div className="min-h-screen bg-cream-bg">
