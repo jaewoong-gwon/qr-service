@@ -9,9 +9,10 @@ import { TagsPanel } from '@/components/admin/TagsPanel'
 import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
 import { ClosingTemplatePanel, type ClosingFormData } from '@/components/admin/ClosingTemplatePanel'
+import { ContentLibraryPanel, type ContentLinkFormData } from '@/components/admin/ContentLibraryPanel'
 import { SaveCompleteModal } from '@/components/admin/SaveCompleteModal'
 import type { NoticeFormData } from '@/components/admin/NoticePanel'
-import type { Product, ProductTag, ProductSection, NoticeGroup, Store, ClosingTemplate } from '@/lib/types'
+import type { Product, ProductTag, ProductSection, NoticeGroup, Store, ClosingTemplate, ContentLibraryItem, ProductContentLink } from '@/lib/types'
 
 const PREVIEW_SCALE = 0.923
 const INNER_W = 390
@@ -35,6 +36,8 @@ export default function NewQrPage() {
   const [noticeGroups, setNoticeGroups] = useState<(NoticeGroup & { id: string; name: string })[]>([])
   const [closingTemplates, setClosingTemplates] = useState<ClosingTemplate[]>([])
   const [closingData, setClosingData] = useState<ClosingFormData | null>(null)
+  const [contentLinks, setContentLinks] = useState<ContentLinkFormData[]>([])
+  const [contentLibrary, setContentLibrary] = useState<ContentLibraryItem[]>([])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [createdId, setCreatedId] = useState<string | null>(null)
@@ -46,10 +49,12 @@ export default function NewQrPage() {
       fetch('/api/notice-groups').then((r) => r.json()),
       fetch('/api/stores').then((r) => r.json()),
       fetch('/api/closing-templates').then((r) => r.json()),
-    ]).then(([groups, storeList, templates]) => {
+      fetch('/api/content-library').then((r) => r.json()),
+    ]).then(([groups, storeList, templates, library]) => {
       if (Array.isArray(groups)) setNoticeGroups(groups)
       if (Array.isArray(storeList)) setStores(storeList)
       if (Array.isArray(templates)) setClosingTemplates(templates)
+      if (Array.isArray(library)) setContentLibrary(library)
     }).catch((err) => console.error('Failed to load data:', err))
   }, [])
 
@@ -83,6 +88,15 @@ export default function NewQrPage() {
         : closingData?.mode === 'new' && closingData.newTemplate
           ? { id: '', name: closingData.newTemplate.name, body: closingData.newTemplate.body }
           : null,
+    product_content_links: contentLinks
+      .filter((l) => l.content_id !== null || l.new_content !== null)
+      .map((l, i) => ({
+        id: `preview-${i}`,
+        sort_order: l.sort_order,
+        content_library: l.new_content
+          ? { id: `new-${i}`, title: l.new_content.title, body: l.new_content.body }
+          : { id: l.content_id!, title: contentLibrary.find((c) => c.id === l.content_id)?.title ?? '', body: contentLibrary.find((c) => c.id === l.content_id)?.body ?? '' },
+      })) as ProductContentLink[],
   }
 
   async function handleCreate() {
@@ -112,6 +126,7 @@ export default function NewQrPage() {
             new_template: closingData.mode === 'new' ? closingData.newTemplate : null,
           }
         : null,
+      content_links: contentLinks,
     }
     const res = await fetch('/api/qr', {
       method: 'POST',
@@ -212,6 +227,12 @@ export default function NewQrPage() {
                   <p className="text-xs text-brown-muted mb-4">
                     섹션은 랜딩 페이지 본문에 순서대로 표시됩니다.
                   </p>
+                  <ContentLibraryPanel
+                    mode="create"
+                    contentLibrary={contentLibrary}
+                    contentLinks={contentLinks}
+                    onChange={setContentLinks}
+                  />
                   <SectionsPanel mode="create" sections={sections} onChange={setSections} />
                   <div className="mt-5 pt-4 border-t border-gold/10">
                     <p className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-4">마무리 문구</p>
