@@ -5,6 +5,8 @@ interface SectionCardProps {
 }
 
 export function SectionCard({ section }: SectionCardProps) {
+  const paragraphs = section.body ? section.body.split('\n').filter(Boolean) : []
+
   return (
     <div className="bg-cream rounded-2xl px-5 py-5">
       {section.title && (
@@ -12,8 +14,14 @@ export function SectionCard({ section }: SectionCardProps) {
           {section.title}
         </p>
       )}
-      {section.body && (
-        <p className="text-[14px] text-brown-dark leading-[1.75]">{section.body}</p>
+      {paragraphs.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {paragraphs.map((p, i) => (
+            <div key={i} className="bg-cream-bg rounded-xl px-4 py-3">
+              <p className="text-[14px] text-brown-dark leading-[1.75]">{p}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )
