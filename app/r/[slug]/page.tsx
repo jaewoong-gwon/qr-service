@@ -20,7 +20,8 @@ export default async function ProductPage({
         product_tags ( label, sort_order ),
         notice_groups ( notice_group_items ( content, sort_order ) ),
         closing_templates ( id, name, body ),
-        product_sections ( * )
+        product_sections ( * ),
+        product_content_links ( id, sort_order, content_library ( id, title, body ) )
       )
     `)
     .eq('slug', slug)
