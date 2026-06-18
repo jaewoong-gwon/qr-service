@@ -8,12 +8,13 @@ import { TagsPanel } from '@/components/admin/TagsPanel'
 import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
 import { SaveCompleteModal } from '@/components/admin/SaveCompleteModal'
-import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup, Store } from '@/lib/types'
+import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup, Store, ClosingTemplate } from '@/lib/types'
 
 interface EditClientProps {
   item: QrCodeWithProduct
   allNoticeGroups: (NoticeGroup & { id: string; name: string })[]
   stores: Store[]
+  closingTemplates: ClosingTemplate[]
 }
 
 const inputClass =
@@ -30,7 +31,7 @@ const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
 
-export function EditClient({ item, allNoticeGroups, stores }: EditClientProps) {
+export function EditClient({ item, allNoticeGroups, stores, closingTemplates }: EditClientProps) {
   const router = useRouter()
   const p = item.products
   const [tab, setTab] = useState<Tab>('기본 정보')

@@ -19,6 +19,7 @@ export default async function ProductPage({
         *,
         product_tags ( label, sort_order ),
         notice_groups ( notice_group_items ( content, sort_order ) ),
+        closing_templates ( id, name, body ),
         product_sections ( * )
       )
     `)
