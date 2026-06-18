@@ -23,7 +23,7 @@ export async function PATCH(
 ) {
   const { id } = await params
   const requestBody = await request.json()
-  const { name, subtitle, idus_url, store_id } = requestBody
+  const { name, subtitle, idus_url, store_id, closing_template_id } = requestBody
 
   const supabase = createServerSupabaseClient()
 
@@ -32,6 +32,7 @@ export async function PATCH(
   if (subtitle !== undefined) productUpdates.subtitle = subtitle
   if (idus_url !== undefined) productUpdates.idus_url = idus_url
   if (store_id !== undefined) productUpdates.store_id = store_id
+  if (closing_template_id !== undefined) productUpdates.closing_template_id = closing_template_id
 
   if (Object.keys(productUpdates).length > 0) {
     const { error } = await supabase

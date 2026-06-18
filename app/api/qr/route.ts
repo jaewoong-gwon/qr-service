@@ -14,6 +14,10 @@ interface NoticeInput {
   group_id: string | null
   new_group: { name: string; items: { content: string; sort_order: number }[] } | null
 }
+interface ClosingInput {
+  template_id: string | null
+  new_template: { name: string; body: string } | null
+}
 
 export async function GET() {
   const supabase = createServerSupabaseClient()
@@ -40,6 +44,7 @@ export async function POST(request: NextRequest) {
   const tags: TagInput[] = requestBody.tags ?? []
   const sections: SectionInput[] = requestBody.sections ?? []
   const notice: NoticeInput | null = requestBody.notice ?? null
+  const closing: ClosingInput | null = requestBody.closing ?? null
 
   if (!name?.trim()) {
     return NextResponse.json({ error: '제품명을 입력해주세요' }, { status: 400 })
@@ -56,6 +61,22 @@ export async function POST(request: NextRequest) {
 
   if (qrError || !qrCode) {
     return NextResponse.json({ error: qrError?.message ?? 'QR 생성 실패' }, { status: 500 })
+  }
+
+  // 0. Handle closing template
+  let closingTemplateId: string | null = null
+  if (closing?.new_template) {
+    const { data: tpl, error: tplError } = await supabase
+      .from('closing_templates')
+      .insert({ name: closing.new_template.name.trim(), body: closing.new_template.body.trim() })
+      .select('id')
+      .single()
+    if (tplError || !tpl) {
+      return NextResponse.json({ error: tplError?.message ?? '마무리 템플릿 생성 실패' }, { status: 500 })
+    }
+    closingTemplateId = tpl.id
+  } else if (closing?.template_id) {
+    closingTemplateId = closing.template_id
   }
 
   // 1. Handle notice group
@@ -93,6 +114,7 @@ export async function POST(request: NextRequest) {
       idus_url: idus_url ?? null,
       is_active: true,
       notice_group_id: noticeGroupId,
+      closing_template_id: closingTemplateId,
     })
     .select()
     .single()
