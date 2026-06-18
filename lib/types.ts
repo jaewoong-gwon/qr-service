@@ -26,13 +26,19 @@ export interface NoticeGroup {
   notice_group_items: NoticeGroupItem[]
 }
 
+export interface ClosingTemplate {
+  id: string
+  name: string
+  body: string
+}
+
 export interface ProductTag {
   id?: string
   label: string
   sort_order: number
 }
 
-export type SectionType = 'meaning' | 'closing'
+export type SectionType = 'meaning'
 
 export interface ProductSection {
   id: string
@@ -51,8 +57,10 @@ export interface Product {
   idus_url: string | null
   is_active: boolean
   notice_group_id?: string | null
+  closing_template_id?: string | null
   product_tags?: ProductTag[]
   notice_groups?: NoticeGroup | null
+  closing_templates?: ClosingTemplate | null
   product_sections?: ProductSection[]
 }
 
