@@ -20,7 +20,6 @@ export type SectionsPanelProps = SectionsPanelCreateProps | SectionsPanelEditPro
 
 const SECTION_TYPES = [
   { value: 'meaning' as const, label: '추가 설명' },
-  { value: 'closing' as const, label: '마무리 문구' },
 ]
 
 const inputClass =
@@ -105,13 +104,11 @@ export function SectionsPanel(props: SectionsPanelProps) {
   return (
     <div className="flex flex-col gap-3">
       {sections.map((section, sIdx) => {
-        const isClosing = section.section_type === 'closing'
-        const selectValue = isClosing ? 'closing' : 'meaning'
         return (
           <div key={section.id} className="border border-gold/30 rounded-lg p-4 bg-white">
             <div className="flex items-center gap-2 mb-3">
               <select
-                value={selectValue}
+                value="meaning"
                 onChange={(e) => {
                   updateField(sIdx, 'section_type', e.target.value)
                   if (props.mode === 'edit') saveField(sIdx, 'section_type', e.target.value)
@@ -154,25 +151,23 @@ export function SectionsPanel(props: SectionsPanelProps) {
             </div>
 
             <div className="flex flex-col gap-3">
-              {!isClosing && (
-                <div>
-                  <p className={labelClass}>제목</p>
-                  <input
-                    value={section.title ?? ''}
-                    onChange={(e) => updateField(sIdx, 'title', e.target.value || null)}
-                    onBlur={(e) => saveField(sIdx, 'title', e.target.value || null)}
-                    placeholder="제목을 입력하세요"
-                    className={inputClass}
-                  />
-                </div>
-              )}
               <div>
-                <p className={labelClass}>{isClosing ? '마무리 문구' : '설명'}</p>
+                <p className={labelClass}>제목</p>
+                <input
+                  value={section.title ?? ''}
+                  onChange={(e) => updateField(sIdx, 'title', e.target.value || null)}
+                  onBlur={(e) => saveField(sIdx, 'title', e.target.value || null)}
+                  placeholder="제목을 입력하세요"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <p className={labelClass}>설명</p>
                 <textarea
                   value={section.body ?? ''}
                   onChange={(e) => updateField(sIdx, 'body', e.target.value || null)}
                   onBlur={(e) => saveField(sIdx, 'body', e.target.value || null)}
-                  placeholder={isClosing ? '마무리 문구를 입력하세요' : '설명을 입력하세요'}
+                  placeholder="설명을 입력하세요"
                   rows={3}
                   className={`${inputClass} resize-none`}
                 />
