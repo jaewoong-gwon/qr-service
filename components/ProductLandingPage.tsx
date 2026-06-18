@@ -1,4 +1,4 @@
-import type { Product } from '@/lib/types'
+import type { Product, ProductSection } from '@/lib/types'
 import { SectionCard } from '@/components/sections/SectionCard'
 
 interface ProductLandingPageProps {
@@ -21,6 +21,18 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
   const tags = (product.product_tags ?? [])
     .slice()
     .sort((a, b) => a.sort_order - b.sort_order)
+
+  // product_content_links를 SectionCard 형태로 변환 (sort_order 오름차순)
+  const contentLinkSections: ProductSection[] = (product.product_content_links ?? [])
+    .slice()
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((link) => ({
+      id: link.id,
+      section_type: 'meaning' as const,
+      title: link.content_library.title,
+      body: link.content_library.body,
+      sort_order: link.sort_order,
+    }))
 
   const sections = (product.product_sections ?? [])
     .slice()
@@ -72,7 +84,12 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
           </div>
         )}
 
-        {/* 동적 섹션 (meaning 타입만) */}
+        {/* 공유 콘텐츠 (content_library 연결 항목) — product_sections보다 먼저 */}
+        {contentLinkSections.map((section) => (
+          <SectionCard key={section.id} section={section} />
+        ))}
+
+        {/* 제품 고유 섹션 (meaning 타입) */}
         {sections.map((section) => {
           if (!section.title && !section.body) return null
           return <SectionCard key={section.id} section={section} />

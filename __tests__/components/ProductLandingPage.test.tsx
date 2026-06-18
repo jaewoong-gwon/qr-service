@@ -36,6 +36,13 @@ const base: Product = {
       sort_order: 0,
     },
   ],
+  product_content_links: [
+    {
+      id: 'pcl1',
+      sort_order: 0,
+      content_library: { id: 'cl1', title: '훈민정음', body: '세종대왕이 창제한 한국의 문자 체계' },
+    },
+  ],
 }
 
 describe('ProductLandingPage', () => {
@@ -69,7 +76,6 @@ describe('ProductLandingPage', () => {
     expect(screen.getByText('한국 전통 갓의 우아한 선을 담았습니다.')).toBeInTheDocument()
   })
 
-
   it('idus_url이 있으면 아이디어스 링크가 표시된다', () => {
     render(<ProductLandingPage product={base} />)
     const link = screen.getByRole('link', { name: /아이디어스 작품 페이지 보기/ })
@@ -99,5 +105,16 @@ describe('ProductLandingPage', () => {
   it('closing_templates가 없으면 마무리 문구가 없다', () => {
     render(<ProductLandingPage product={{ ...base, closing_templates: null }} />)
     expect(screen.queryByText('작지만 오래 간직할 수 있는 전통의 가치')).not.toBeInTheDocument()
+  })
+
+  it('product_content_links의 title과 body가 렌더링된다', () => {
+    render(<ProductLandingPage product={base} />)
+    expect(screen.getByText('훈민정음')).toBeInTheDocument()
+    expect(screen.getByText('세종대왕이 창제한 한국의 문자 체계')).toBeInTheDocument()
+  })
+
+  it('product_content_links가 없으면 추가 콘텐츠가 없다', () => {
+    render(<ProductLandingPage product={{ ...base, product_content_links: [] }} />)
+    expect(screen.queryByText('훈민정음')).not.toBeInTheDocument()
   })
 })
