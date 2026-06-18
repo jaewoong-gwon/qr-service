@@ -7,6 +7,7 @@ import { ProductLandingPage } from '@/components/ProductLandingPage'
 import { TagsPanel } from '@/components/admin/TagsPanel'
 import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
+import { ClosingTemplatePanel } from '@/components/admin/ClosingTemplatePanel'
 import { SaveCompleteModal } from '@/components/admin/SaveCompleteModal'
 import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup, Store, ClosingTemplate } from '@/lib/types'
 
@@ -46,6 +47,7 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates }: 
   )
   const [sections, setSections] = useState<ProductSection[]>(p?.product_sections ?? [])
   const [noticeGroupId, setNoticeGroupId] = useState<string | null>(p?.notice_group_id ?? null)
+  const [closingTemplateId, setClosingTemplateId] = useState<string | null>(p?.closing_template_id ?? null)
 
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
@@ -63,6 +65,8 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates }: 
     product_tags: tags,
     notice_groups: allNoticeGroups.find((g) => g.id === noticeGroupId) ?? p?.notice_groups ?? null,
     product_sections: sections,
+    closing_template_id: closingTemplateId,
+    closing_templates: closingTemplates.find((t) => t.id === closingTemplateId) ?? null,
   }
 
   async function handleSave() {
@@ -231,12 +235,24 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates }: 
               )}
 
               {tab === '섹션' && (
-                <SectionsPanel
-                  mode="edit"
-                  sections={sections}
-                  qrId={item.id}
-                  onUpdate={setSections}
-                />
+                <>
+                  <SectionsPanel
+                    mode="edit"
+                    sections={sections}
+                    qrId={item.id}
+                    onUpdate={setSections}
+                  />
+                  <div className="mt-5 pt-4 border-t border-gold/10">
+                    <p className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-4">마무리 문구</p>
+                    <ClosingTemplatePanel
+                      mode="edit"
+                      currentTemplateId={closingTemplateId}
+                      templates={closingTemplates}
+                      qrId={item.id}
+                      onUpdate={setClosingTemplateId}
+                    />
+                  </div>
+                </>
               )}
 
               {/* 저장 버튼 (모든 탭) */}
