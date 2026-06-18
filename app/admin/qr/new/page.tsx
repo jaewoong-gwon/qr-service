@@ -220,6 +220,7 @@ export default function NewQrPage() {
                       closingData={closingData}
                       templates={closingTemplates}
                       onChange={setClosingData}
+                      onTemplatesChange={setClosingTemplates}
                     />
                   </div>
                 </div>

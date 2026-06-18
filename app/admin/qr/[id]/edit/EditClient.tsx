@@ -32,7 +32,7 @@ const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
 
-export function EditClient({ item, allNoticeGroups, stores, closingTemplates }: EditClientProps) {
+export function EditClient({ item, allNoticeGroups, stores, closingTemplates: initialClosingTemplates }: EditClientProps) {
   const router = useRouter()
   const p = item.products
   const [tab, setTab] = useState<Tab>('기본 정보')
@@ -48,6 +48,7 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates }: 
   const [sections, setSections] = useState<ProductSection[]>(p?.product_sections ?? [])
   const [noticeGroupId, setNoticeGroupId] = useState<string | null>(p?.notice_group_id ?? null)
   const [closingTemplateId, setClosingTemplateId] = useState<string | null>(p?.closing_template_id ?? null)
+  const [closingTemplates, setClosingTemplates] = useState<ClosingTemplate[]>(initialClosingTemplates)
 
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
@@ -250,6 +251,7 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates }: 
                       templates={closingTemplates}
                       qrId={item.id}
                       onUpdate={setClosingTemplateId}
+                      onTemplatesChange={setClosingTemplates}
                     />
                   </div>
                 </>

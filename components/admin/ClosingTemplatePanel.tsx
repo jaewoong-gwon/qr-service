@@ -14,6 +14,7 @@ interface ClosingTemplatePanelCreateProps {
   closingData: ClosingFormData | null
   templates: ClosingTemplate[]
   onChange: (data: ClosingFormData | null) => void
+  onTemplatesChange?: (templates: ClosingTemplate[]) => void
 }
 
 interface ClosingTemplatePanelEditProps {
@@ -22,6 +23,7 @@ interface ClosingTemplatePanelEditProps {
   templates: ClosingTemplate[]
   qrId: string
   onUpdate: (templateId: string | null) => void
+  onTemplatesChange?: (templates: ClosingTemplate[]) => void
 }
 
 export type ClosingTemplatePanelProps =
@@ -38,6 +40,9 @@ export function ClosingTemplatePanel(props: ClosingTemplatePanelProps) {
   const [newName, setNewName] = useState('')
   const [newBody, setNewBody] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [editBody, setEditBody] = useState('')
 
   const templates = props.templates
 
@@ -47,6 +52,8 @@ export function ClosingTemplatePanel(props: ClosingTemplatePanelProps) {
         ? props.closingData.templateId
         : ''
       : props.currentTemplateId ?? ''
+
+  const selectedTemplate = templates.find((t) => t.id === (selectedTemplateId ?? '')) ?? null
 
   function handleExistingSelect(templateId: string) {
     if (props.mode === 'create') {
@@ -95,9 +102,26 @@ export function ClosingTemplatePanel(props: ClosingTemplatePanelProps) {
     }
   }
 
+  async function confirmEditTemplate() {
+    if (!editName.trim() || !editBody.trim() || !selectedTemplateId) return
+    setLoading(true)
+    const res = await fetch(`/api/closing-templates/${selectedTemplateId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: editName.trim(), body: editBody.trim() }),
+    })
+    if (res.ok) {
+      const updated: ClosingTemplate = await res.json()
+      const next = templates.map((t) => (t.id === updated.id ? updated : t))
+      props.onTemplatesChange?.(next)
+      setShowEditForm(false)
+    }
+    setLoading(false)
+  }
+
   return (
     <div className="flex flex-col gap-3">
-      {!showNewForm && (
+      {!showNewForm && !showEditForm && (
         <>
           <div>
             <label className="block text-xs font-bold text-brown-mid mb-1">마무리 문구 선택</label>
@@ -115,13 +139,28 @@ export function ClosingTemplatePanel(props: ClosingTemplatePanelProps) {
               ))}
             </select>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowNewForm(true)}
-            className="self-start text-xs px-3 py-1.5 border border-gold/40 rounded text-brown-mid hover:bg-gold/10"
-          >
-            새 템플릿 만들기
-          </button>
+          <div className="flex gap-2">
+            {selectedTemplate && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditName(selectedTemplate.name)
+                  setEditBody(selectedTemplate.body)
+                  setShowEditForm(true)
+                }}
+                className="self-start text-xs px-3 py-1.5 border border-gold/40 rounded text-brown-mid hover:bg-gold/10"
+              >
+                템플릿 수정
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowNewForm(true)}
+              className="self-start text-xs px-3 py-1.5 border border-gold/40 rounded text-brown-mid hover:bg-gold/10"
+            >
+              새 템플릿 만들기
+            </button>
+          </div>
         </>
       )}
 
@@ -153,6 +192,45 @@ export function ClosingTemplatePanel(props: ClosingTemplatePanelProps) {
             <button
               type="button"
               onClick={() => setShowNewForm(false)}
+              className="px-4 py-2 text-sm border border-gold/40 rounded-lg text-brown-light hover:bg-gold/10"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showEditForm && (
+        <div className="border border-gold/30 rounded-lg p-4 bg-white flex flex-col gap-3">
+          <p className="text-xs font-bold text-brown-dark">마무리 문구 템플릿 수정</p>
+          <input
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            placeholder="템플릿 이름"
+            className={inputClass}
+          />
+          <textarea
+            value={editBody}
+            onChange={(e) => setEditBody(e.target.value)}
+            placeholder="마무리 문구를 입력하세요"
+            rows={3}
+            className={`${inputClass} resize-none`}
+          />
+          <p className="text-[11px] text-brown-muted bg-gold/5 border border-gold/20 rounded px-2.5 py-1.5">
+            ⚠ 이 템플릿을 사용하는 모든 제품에 반영됩니다
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={confirmEditTemplate}
+              disabled={!editName.trim() || !editBody.trim() || loading}
+              className="px-4 py-2 text-sm bg-gold text-cream rounded-lg hover:bg-gold/90 disabled:opacity-50"
+            >
+              저장
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowEditForm(false)}
               className="px-4 py-2 text-sm border border-gold/40 rounded-lg text-brown-light hover:bg-gold/10"
             >
               취소
