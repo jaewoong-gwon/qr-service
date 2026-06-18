@@ -7,6 +7,7 @@
 -- ─────────────────────────────────────────────────────
 -- 1. 테이블 전체 삭제 (FK 의존 순서대로)
 -- ─────────────────────────────────────────────────────
+DROP TABLE IF EXISTS closing_templates   CASCADE;
 DROP TABLE IF EXISTS product_sections   CASCADE;
 DROP TABLE IF EXISTS product_tags       CASCADE;
 DROP TABLE IF EXISTS notice_group_items CASCADE;
@@ -35,6 +36,13 @@ CREATE TABLE qr_codes (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- 마무리 문구 공통 템플릿
+CREATE TABLE closing_templates (
+  id   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  body text NOT NULL
+);
+
 -- 매장
 CREATE TABLE stores (
   id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -59,7 +67,8 @@ CREATE TABLE products (
   subtitle         text,
   idus_url         text,
   is_active        boolean NOT NULL DEFAULT true,
-  notice_group_id  uuid    REFERENCES notice_groups(id)
+  notice_group_id  uuid    REFERENCES notice_groups(id),
+  closing_template_id  uuid    REFERENCES closing_templates(id) ON DELETE SET NULL
 );
 
 -- 그룹별 확인사항 항목
@@ -83,7 +92,7 @@ CREATE TABLE product_tags (
 CREATE TABLE product_sections (
   id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id   uuid NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  section_type text NOT NULL CHECK (section_type IN ('meaning', 'closing')),
+  section_type text NOT NULL CHECK (section_type IN ('meaning')),
   title        text,
   body         text,
   sort_order   int  NOT NULL DEFAULT 0

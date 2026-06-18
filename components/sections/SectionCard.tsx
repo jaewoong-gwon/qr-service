@@ -5,20 +5,7 @@ interface SectionCardProps {
 }
 
 export function SectionCard({ section }: SectionCardProps) {
-  if (section.section_type === 'closing') {
-    return (
-      <div className="bg-cream rounded-2xl px-5 py-6 text-center">
-        {section.title && (
-          <p className="text-[10px] text-gold font-bold tracking-[2px] uppercase mb-3">{section.title}</p>
-        )}
-        {section.body && (
-          <p className="text-[17px] font-bold text-brown-dark leading-[1.7]">
-            {section.body}
-          </p>
-        )}
-      </div>
-    )
-  }
+  const paragraphs = section.body ? section.body.split('\n').filter(Boolean) : []
 
   return (
     <div className="bg-cream rounded-2xl px-5 py-5">
@@ -27,8 +14,14 @@ export function SectionCard({ section }: SectionCardProps) {
           {section.title}
         </p>
       )}
-      {section.body && (
-        <p className="text-[14px] text-brown-dark leading-[1.75]">{section.body}</p>
+      {paragraphs.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {paragraphs.map((p, i) => (
+            <div key={i} className="bg-cream-bg rounded-xl px-4 py-3">
+              <p className="text-[14px] text-brown-dark leading-[1.75]">{p}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )

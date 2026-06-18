@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import { EditClient } from './EditClient'
-import type { QrCodeWithProduct, NoticeGroup, Store } from '@/lib/types'
+import type { QrCodeWithProduct, NoticeGroup, Store, ClosingTemplate } from '@/lib/types'
 
 export default async function EditPage({
   params,
@@ -11,29 +11,35 @@ export default async function EditPage({
   const { id } = await params
   const supabase = createServerSupabaseClient()
 
-  const [{ data, error }, { data: allGroups }, { data: allStores }] = await Promise.all([
-    supabase
-      .from('qr_codes')
-      .select(`
-        *,
-        products (
+  const [{ data, error }, { data: allGroups }, { data: allStores }, { data: allClosingTemplates }] =
+    await Promise.all([
+      supabase
+        .from('qr_codes')
+        .select(`
           *,
-          product_tags ( id, label, sort_order ),
-          notice_groups ( id, name, notice_group_items ( id, content, sort_order ) ),
-          product_sections ( * )
-        )
-      `)
-      .eq('id', id)
-      .single(),
-    supabase
-      .from('notice_groups')
-      .select('id, name, notice_group_items ( id, content, sort_order )')
-      .order('name'),
-    supabase
-      .from('stores')
-      .select('id, name, slug, created_at, admin_id')
-      .order('created_at', { ascending: true }),
-  ])
+          products (
+            *,
+            product_tags ( id, label, sort_order ),
+            notice_groups ( id, name, notice_group_items ( id, content, sort_order ) ),
+            closing_templates ( id, name, body ),
+            product_sections ( * )
+          )
+        `)
+        .eq('id', id)
+        .single(),
+      supabase
+        .from('notice_groups')
+        .select('id, name, notice_group_items ( id, content, sort_order )')
+        .order('name'),
+      supabase
+        .from('stores')
+        .select('id, name, slug, created_at, admin_id')
+        .order('created_at', { ascending: true }),
+      supabase
+        .from('closing_templates')
+        .select('id, name, body')
+        .order('name'),
+    ])
 
   if (error && error.code !== 'PGRST116') throw new Error(error.message)
   if (!data) notFound()
@@ -46,6 +52,7 @@ export default async function EditPage({
   }
   const groups = (allGroups ?? []) as unknown as (NoticeGroup & { id: string; name: string })[]
   const stores = (allStores ?? []) as unknown as Store[]
+  const closingTemplates = (allClosingTemplates ?? []) as ClosingTemplate[]
 
-  return <EditClient item={item} allNoticeGroups={groups} stores={stores} />
+  return <EditClient item={item} allNoticeGroups={groups} stores={stores} closingTemplates={closingTemplates} />
 }

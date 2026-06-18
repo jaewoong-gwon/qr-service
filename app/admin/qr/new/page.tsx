@@ -8,9 +8,10 @@ import { Step1Basic, type BasicData } from './steps/Step1Basic'
 import { TagsPanel } from '@/components/admin/TagsPanel'
 import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
+import { ClosingTemplatePanel, type ClosingFormData } from '@/components/admin/ClosingTemplatePanel'
 import { SaveCompleteModal } from '@/components/admin/SaveCompleteModal'
 import type { NoticeFormData } from '@/components/admin/NoticePanel'
-import type { Product, ProductTag, ProductSection, NoticeGroup, Store } from '@/lib/types'
+import type { Product, ProductTag, ProductSection, NoticeGroup, Store, ClosingTemplate } from '@/lib/types'
 
 const PREVIEW_SCALE = 0.923
 const INNER_W = 390
@@ -32,6 +33,8 @@ export default function NewQrPage() {
   const [sections, setSections] = useState<ProductSection[]>([])
   const [noticeData, setNoticeData] = useState<NoticeFormData | null>(null)
   const [noticeGroups, setNoticeGroups] = useState<(NoticeGroup & { id: string; name: string })[]>([])
+  const [closingTemplates, setClosingTemplates] = useState<ClosingTemplate[]>([])
+  const [closingData, setClosingData] = useState<ClosingFormData | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [createdId, setCreatedId] = useState<string | null>(null)
@@ -42,9 +45,11 @@ export default function NewQrPage() {
     Promise.all([
       fetch('/api/notice-groups').then((r) => r.json()),
       fetch('/api/stores').then((r) => r.json()),
-    ]).then(([groups, storeList]) => {
+      fetch('/api/closing-templates').then((r) => r.json()),
+    ]).then(([groups, storeList, templates]) => {
       if (Array.isArray(groups)) setNoticeGroups(groups)
       if (Array.isArray(storeList)) setStores(storeList)
+      if (Array.isArray(templates)) setClosingTemplates(templates)
     }).catch((err) => console.error('Failed to load data:', err))
   }, [])
 
@@ -68,7 +73,16 @@ export default function NewQrPage() {
               sort_order: i,
             })),
           }
-        : null,
+        : noticeData?.mode === 'existing' && noticeData.groupId
+          ? (noticeGroups.find((g) => g.id === noticeData.groupId) ?? null)
+          : null,
+    closing_template_id: closingData?.mode === 'existing' ? closingData.templateId : null,
+    closing_templates:
+      closingData?.mode === 'existing' && closingData.templateId
+        ? (closingTemplates.find((t) => t.id === closingData.templateId) ?? null)
+        : closingData?.mode === 'new' && closingData.newTemplate
+          ? { id: '', name: closingData.newTemplate.name, body: closingData.newTemplate.body }
+          : null,
   }
 
   async function handleCreate() {
@@ -90,6 +104,12 @@ export default function NewQrPage() {
         ? {
             group_id: noticeData.mode === 'existing' ? noticeData.groupId : null,
             new_group: noticeData.mode === 'new' ? noticeData.newGroup : null,
+          }
+        : null,
+      closing: closingData
+        ? {
+            template_id: closingData.mode === 'existing' ? closingData.templateId : null,
+            new_template: closingData.mode === 'new' ? closingData.newTemplate : null,
           }
         : null,
     }
@@ -193,6 +213,16 @@ export default function NewQrPage() {
                     섹션은 랜딩 페이지 본문에 순서대로 표시됩니다.
                   </p>
                   <SectionsPanel mode="create" sections={sections} onChange={setSections} />
+                  <div className="mt-5 pt-4 border-t border-gold/10">
+                    <p className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-4">마무리 문구</p>
+                    <ClosingTemplatePanel
+                      mode="create"
+                      closingData={closingData}
+                      templates={closingTemplates}
+                      onChange={setClosingData}
+                      onTemplatesChange={setClosingTemplates}
+                    />
+                  </div>
                 </div>
               )}
             </div>

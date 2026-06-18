@@ -1,6 +1,6 @@
 // lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
-import type { QrCode, Product, Store } from '@/lib/types'
+import type { ClosingTemplate, QrCode, Product, Store } from '@/lib/types'
 
 interface Admin {
   id: string
@@ -34,6 +34,12 @@ type Database = {
         Row: { id: string; notice_group_id: string; content: string; sort_order: number } & Record<string, unknown>
         Insert: { notice_group_id: string; content: string; sort_order?: number } & Record<string, unknown>
         Update: Partial<{ content: string; sort_order: number }> & Record<string, unknown>
+        Relationships: []
+      }
+      closing_templates: {
+        Row: ClosingTemplate & Record<string, unknown>
+        Insert: Omit<ClosingTemplate, 'id'> & Record<string, unknown>
+        Update: Partial<Omit<ClosingTemplate, 'id'>> & Record<string, unknown>
         Relationships: []
       }
       product_tags: {

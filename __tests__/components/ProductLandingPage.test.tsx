@@ -12,6 +12,12 @@ const base: Product = {
   subtitle: '전통의 아름다움을 일상 속에',
   idus_url: 'https://www.idus.com/v2/product/abc',
   is_active: true,
+  closing_template_id: 'ct1',
+  closing_templates: {
+    id: 'ct1',
+    name: '레진 키링 마무리',
+    body: '작지만 오래 간직할 수 있는 전통의 가치',
+  },
   product_tags: [
     { label: '핸드메이드', sort_order: 0 },
     { label: '전통 소품', sort_order: 1 },
@@ -28,13 +34,6 @@ const base: Product = {
       title: '갓의 의미',
       body: '한국 전통 갓의 우아한 선을 담았습니다.',
       sort_order: 0,
-    },
-    {
-      id: 's2',
-      section_type: 'closing',
-      title: null,
-      body: '작지만 오래 간직할 수 있는 전통의 가치',
-      sort_order: 1,
     },
   ],
 }
@@ -70,10 +69,6 @@ describe('ProductLandingPage', () => {
     expect(screen.getByText('한국 전통 갓의 우아한 선을 담았습니다.')).toBeInTheDocument()
   })
 
-  it('closing 섹션이 렌더링된다', () => {
-    render(<ProductLandingPage product={base} />)
-    expect(screen.getByText('작지만 오래 간직할 수 있는 전통의 가치')).toBeInTheDocument()
-  })
 
   it('idus_url이 있으면 아이디어스 링크가 표시된다', () => {
     render(<ProductLandingPage product={base} />)
@@ -94,5 +89,15 @@ describe('ProductLandingPage', () => {
   it('product가 null이면 기본 문구가 표시된다', () => {
     render(<ProductLandingPage product={null} />)
     expect(screen.getByText('제품 정보 없음')).toBeInTheDocument()
+  })
+
+  it('closing_templates.body가 렌더링된다', () => {
+    render(<ProductLandingPage product={base} />)
+    expect(screen.getByText('작지만 오래 간직할 수 있는 전통의 가치')).toBeInTheDocument()
+  })
+
+  it('closing_templates가 없으면 마무리 문구가 없다', () => {
+    render(<ProductLandingPage product={{ ...base, closing_templates: null }} />)
+    expect(screen.queryByText('작지만 오래 간직할 수 있는 전통의 가치')).not.toBeInTheDocument()
   })
 })

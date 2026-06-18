@@ -26,6 +26,8 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
     .slice()
     .sort((a, b) => a.sort_order - b.sort_order)
 
+  const closingBody = product.closing_templates?.body ?? null
+
   return (
     <div className="min-h-screen bg-cream-bg">
       {/* Hero */}
@@ -70,11 +72,20 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
           </div>
         )}
 
-        {/* 동적 섹션 */}
+        {/* 동적 섹션 (meaning 타입만) */}
         {sections.map((section) => {
           if (!section.title && !section.body) return null
           return <SectionCard key={section.id} section={section} />
         })}
+
+        {/* 마무리 문구 — closing_template에서 고정 출력 */}
+        {closingBody && (
+          <div className="bg-cream rounded-2xl px-5 py-6 text-center">
+            <p className="text-[17px] font-bold text-brown-dark leading-[1.7]">
+              {closingBody}
+            </p>
+          </div>
+        )}
 
         {/* 아이디어스 CTA */}
         {product.idus_url && (
