@@ -9,6 +9,7 @@ interface SectionInput {
   title: string | null
   body: string | null
   sort_order: number
+  icon?: string | null
 }
 interface NoticeInput {
   group_id: string | null
@@ -17,6 +18,11 @@ interface NoticeInput {
 interface ClosingInput {
   template_id: string | null
   new_template: { name: string; body: string } | null
+}
+interface ContentLinkInput {
+  content_id: string | null
+  new_content: { title: string; body: string; icon?: string | null } | null
+  sort_order: number
 }
 
 export async function GET() {
@@ -45,6 +51,7 @@ export async function POST(request: NextRequest) {
   const sections: SectionInput[] = requestBody.sections ?? []
   const notice: NoticeInput | null = requestBody.notice ?? null
   const closing: ClosingInput | null = requestBody.closing ?? null
+  const contentLinks: ContentLinkInput[] = requestBody.content_links ?? []
 
   if (!name?.trim()) {
     return NextResponse.json({ error: '제품명을 입력해주세요' }, { status: 400 })
@@ -140,6 +147,32 @@ export async function POST(request: NextRequest) {
     )
     if (secError) {
       return NextResponse.json({ error: secError.message ?? '섹션 생성 실패' }, { status: 500 })
+    }
+  }
+
+  // 5. Insert content links
+  if (contentLinks.length > 0) {
+    for (const link of contentLinks) {
+      let contentId = link.content_id
+      if (link.new_content) {
+        const { data: newItem, error: newItemError } = await supabase
+          .from('content_library')
+          .insert({ title: link.new_content.title.trim(), body: link.new_content.body.trim(), icon: link.new_content.icon ?? null })
+          .select('id')
+          .single()
+        if (newItemError || !newItem) {
+          return NextResponse.json({ error: newItemError?.message ?? '콘텐츠 생성 실패' }, { status: 500 })
+        }
+        contentId = newItem.id
+      }
+      if (contentId) {
+        const { error: linkError } = await supabase
+          .from('product_content_links')
+          .insert({ product_id: product.id, content_id: contentId, sort_order: link.sort_order })
+        if (linkError) {
+          return NextResponse.json({ error: linkError.message ?? '콘텐츠 연결 실패' }, { status: 500 })
+        }
+      }
     }
   }
 

@@ -8,7 +8,11 @@ async function globalSetup() {
   const baseURL = process.env.BASE_URL ?? 'http://localhost:3000'
   const { hostname } = new URL(baseURL)
 
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
+  if (!process.env.JWT_SECRET) {
+    throw new Error('[global-setup] JWT_SECRET 환경변수가 설정되지 않았습니다. GitHub Secrets에 JWT_SECRET을 추가하세요.')
+  }
+
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET)
   // sub는 DB의 admins.admin_id 값과 일치해야 getAdminId()가 동작함
   const token = await new SignJWT({ sub: 'admin' })
     .setProtectedHeader({ alg: 'HS256' })
@@ -54,7 +58,11 @@ async function globalSetup() {
 
   if (!res.ok) {
     const body = await res.text()
-    throw new Error(`테스트 매장 생성 실패 (${res.status}): ${body}`)
+    const hint =
+      res.status === 401
+        ? '\n힌트: Vercel 프리뷰 환경에 JWT_SECRET이 설정됐는지, 그리고 GitHub Secrets의 JWT_SECRET과 동일한 값인지 확인하세요.'
+        : ''
+    throw new Error(`테스트 매장 생성 실패 (${res.status}): ${body}${hint}`)
   }
 
   const store = await res.json()

@@ -32,6 +32,19 @@ export interface ClosingTemplate {
   body: string
 }
 
+export interface ContentLibraryItem {
+  id: string
+  title: string
+  body: string
+  icon?: string | null
+}
+
+export interface ProductContentLink {
+  id: string
+  sort_order: number
+  content_library: ContentLibraryItem
+}
+
 export interface ProductTag {
   id?: string
   label: string
@@ -46,6 +59,7 @@ export interface ProductSection {
   title: string | null
   body: string | null
   sort_order: number
+  icon?: string | null
 }
 
 export interface Product {
@@ -62,6 +76,7 @@ export interface Product {
   notice_groups?: NoticeGroup | null
   closing_templates?: ClosingTemplate | null
   product_sections?: ProductSection[]
+  product_content_links?: ProductContentLink[]
 }
 
 export interface QrCodeWithProduct extends QrCode {

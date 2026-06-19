@@ -11,6 +11,7 @@ export function SectionCard({ section }: SectionCardProps) {
     <div className="bg-cream rounded-2xl px-5 py-5">
       {section.title && (
         <p className="text-[13px] font-bold text-brown-dark border-l-[3px] border-gold pl-[9px] mb-[10px] leading-snug">
+          {section.icon && <span className="mr-1.5">{section.icon}</span>}
           {section.title}
         </p>
       )}

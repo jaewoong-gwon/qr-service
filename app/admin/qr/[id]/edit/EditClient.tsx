@@ -9,13 +9,15 @@ import { SectionsPanel } from '@/components/admin/SectionsPanel'
 import { NoticePanel } from '@/components/admin/NoticePanel'
 import { ClosingTemplatePanel } from '@/components/admin/ClosingTemplatePanel'
 import { SaveCompleteModal } from '@/components/admin/SaveCompleteModal'
-import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup, Store, ClosingTemplate } from '@/lib/types'
+import { ContentLibraryPanel } from '@/components/admin/ContentLibraryPanel'
+import type { QrCodeWithProduct, Product, ProductTag, ProductSection, NoticeGroup, Store, ClosingTemplate, ContentLibraryItem, ProductContentLink } from '@/lib/types'
 
 interface EditClientProps {
   item: QrCodeWithProduct
   allNoticeGroups: (NoticeGroup & { id: string; name: string })[]
   stores: Store[]
   closingTemplates: ClosingTemplate[]
+  contentLibrary: ContentLibraryItem[]
 }
 
 const inputClass =
@@ -32,7 +34,7 @@ const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
 
-export function EditClient({ item, allNoticeGroups, stores, closingTemplates: initialClosingTemplates }: EditClientProps) {
+export function EditClient({ item, allNoticeGroups, stores, closingTemplates: initialClosingTemplates, contentLibrary: initialContentLibrary }: EditClientProps) {
   const router = useRouter()
   const p = item.products
   const [tab, setTab] = useState<Tab>('기본 정보')
@@ -46,6 +48,8 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates: in
     (p?.product_tags ?? []) as (ProductTag & { id: string })[]
   )
   const [sections, setSections] = useState<ProductSection[]>(p?.product_sections ?? [])
+  const [contentLinks, setContentLinks] = useState<ProductContentLink[]>(p?.product_content_links ?? [])
+  const [contentLibrary, setContentLibrary] = useState<ContentLibraryItem[]>(initialContentLibrary)
   const [noticeGroupId, setNoticeGroupId] = useState<string | null>(p?.notice_group_id ?? null)
   const [closingTemplateId, setClosingTemplateId] = useState<string | null>(p?.closing_template_id ?? null)
   const [closingTemplates, setClosingTemplates] = useState<ClosingTemplate[]>(initialClosingTemplates)
@@ -68,6 +72,7 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates: in
     product_sections: sections,
     closing_template_id: closingTemplateId,
     closing_templates: closingTemplates.find((t) => t.id === closingTemplateId) ?? null,
+    product_content_links: contentLinks,
   }
 
   async function handleSave() {
@@ -237,6 +242,14 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates: in
 
               {tab === '섹션' && (
                 <>
+                  <ContentLibraryPanel
+                    mode="edit"
+                    contentLibrary={contentLibrary}
+                    qrId={item.id}
+                    contentLinks={contentLinks}
+                    onUpdate={setContentLinks}
+                    onContentLibraryChange={setContentLibrary}
+                  />
                   <SectionsPanel
                     mode="edit"
                     sections={sections}

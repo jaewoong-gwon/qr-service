@@ -1,0 +1,1 @@
+ALTER TABLE content_library ADD COLUMN IF NOT EXISTS icon text DEFAULT NULL;

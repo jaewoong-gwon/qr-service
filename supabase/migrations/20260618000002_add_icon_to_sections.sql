@@ -1,0 +1,1 @@
+ALTER TABLE product_sections ADD COLUMN IF NOT EXISTS icon text DEFAULT NULL;
