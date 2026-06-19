@@ -34,7 +34,7 @@ const OUTER_H = Math.round(800 * PREVIEW_SCALE) + BORDER_W * 2
 const TABS = ['기본 정보', '구매 안내', '태그', '섹션'] as const
 type Tab = (typeof TABS)[number]
 
-export function EditClient({ item, allNoticeGroups, stores, closingTemplates: initialClosingTemplates, contentLibrary }: EditClientProps) {
+export function EditClient({ item, allNoticeGroups, stores, closingTemplates: initialClosingTemplates, contentLibrary: initialContentLibrary }: EditClientProps) {
   const router = useRouter()
   const p = item.products
   const [tab, setTab] = useState<Tab>('기본 정보')
@@ -49,6 +49,7 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates: in
   )
   const [sections, setSections] = useState<ProductSection[]>(p?.product_sections ?? [])
   const [contentLinks, setContentLinks] = useState<ProductContentLink[]>(p?.product_content_links ?? [])
+  const [contentLibrary, setContentLibrary] = useState<ContentLibraryItem[]>(initialContentLibrary)
   const [noticeGroupId, setNoticeGroupId] = useState<string | null>(p?.notice_group_id ?? null)
   const [closingTemplateId, setClosingTemplateId] = useState<string | null>(p?.closing_template_id ?? null)
   const [closingTemplates, setClosingTemplates] = useState<ClosingTemplate[]>(initialClosingTemplates)
@@ -247,6 +248,7 @@ export function EditClient({ item, allNoticeGroups, stores, closingTemplates: in
                     qrId={item.id}
                     contentLinks={contentLinks}
                     onUpdate={setContentLinks}
+                    onContentLibraryChange={setContentLibrary}
                   />
                   <SectionsPanel
                     mode="edit"

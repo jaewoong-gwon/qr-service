@@ -37,6 +37,9 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
   const [newTitle, setNewTitle] = useState('')
   const [newBody, setNewBody] = useState('')
   const [loading, setLoading] = useState(false)
+  const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editBody, setEditBody] = useState('')
 
   const usedContentIds =
     props.mode === 'create'
@@ -76,6 +79,35 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
       .filter((_, i) => i !== index)
       .map((l, i) => ({ ...l, sort_order: i }))
     props.onChange(next)
+  }
+
+  function openEdit(link: ProductContentLink) {
+    setEditingLinkId(link.id)
+    setEditTitle(link.content_library.title)
+    setEditBody(link.content_library.body)
+  }
+
+  async function confirmEdit(link: ProductContentLink) {
+    if (!editTitle.trim() || !editBody.trim() || props.mode !== 'edit') return
+    setLoading(true)
+    const res = await fetch(`/api/content-library/${link.content_library.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: editTitle.trim(), body: editBody.trim() }),
+    })
+    if (res.ok) {
+      const updated: ContentLibraryItem = await res.json()
+      props.onContentLibraryChange?.(
+        props.contentLibrary.map((c) => (c.id === updated.id ? updated : c))
+      )
+      props.onUpdate(
+        props.contentLinks.map((l) =>
+          l.content_library.id === updated.id ? { ...l, content_library: updated } : l
+        )
+      )
+    }
+    setEditingLinkId(null)
+    setLoading(false)
   }
 
   async function removeEdit(link: ProductContentLink) {
@@ -271,37 +303,109 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
 
       {props.mode === 'edit' && props.contentLinks.length > 0 && (
         <div className="flex flex-col gap-2">
-          {props.contentLinks.map((link, idx) => (
-            <div key={link.id} className="flex items-center gap-2 border border-gold/20 rounded-lg px-3 py-2 bg-white">
-              <span className="flex-1 text-sm text-brown-dark">{link.content_library.title}</span>
-              <div className="flex gap-1">
-                <button
-                  type="button"
-                  onClick={() => moveEdit(idx, -1)}
-                  disabled={idx === 0 || loading}
-                  className="px-2 py-1 text-xs border border-gold/30 rounded text-brown-mid hover:bg-gold/10 disabled:opacity-30"
-                >
-                  ↑
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveEdit(idx, 1)}
-                  disabled={idx === props.contentLinks.length - 1 || loading}
-                  className="px-2 py-1 text-xs border border-gold/30 rounded text-brown-mid hover:bg-gold/10 disabled:opacity-30"
-                >
-                  ↓
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeEdit(link)}
-                  disabled={loading}
-                  className="px-2 py-1 text-xs border border-red-200 rounded text-red-400 hover:bg-red-50 disabled:opacity-30"
-                >
-                  해제
-                </button>
+          {props.contentLinks.map((link, idx) =>
+            editingLinkId === link.id ? (
+              <div key={link.id} className="border border-gold/30 rounded-lg p-4 bg-white flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <p className="text-xs font-bold text-brown-mid flex-1">콘텐츠 수정</p>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => moveEdit(idx, -1)}
+                      disabled={idx === 0 || loading}
+                      className="px-2 py-1 text-xs border border-gold/30 rounded text-brown-mid hover:bg-gold/10 disabled:opacity-30"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveEdit(idx, 1)}
+                      disabled={idx === props.contentLinks.length - 1 || loading}
+                      className="px-2 py-1 text-xs border border-gold/30 rounded text-brown-mid hover:bg-gold/10 disabled:opacity-30"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+                <input
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="제목"
+                  className={inputClass}
+                />
+                <textarea
+                  value={editBody}
+                  onChange={(e) => setEditBody(e.target.value)}
+                  placeholder="설명"
+                  rows={3}
+                  className={`${inputClass} resize-none`}
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => confirmEdit(link)}
+                    disabled={!editTitle.trim() || !editBody.trim() || loading}
+                    className="px-3 py-1.5 text-xs bg-gold text-cream rounded-lg hover:bg-gold/90 disabled:opacity-50"
+                  >
+                    {loading ? '저장 중...' : '저장'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingLinkId(null)}
+                    className="px-3 py-1.5 text-xs border border-gold/40 rounded-lg text-brown-light hover:bg-gold/10"
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeEdit(link)}
+                    disabled={loading}
+                    className="ml-auto px-3 py-1.5 text-xs border border-red-200 rounded-lg text-red-400 hover:bg-red-50 disabled:opacity-30"
+                  >
+                    해제
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ) : (
+              <div key={link.id} className="flex items-center gap-2 border border-gold/20 rounded-lg px-3 py-2 bg-white">
+                <span className="flex-1 text-sm text-brown-dark">{link.content_library.title}</span>
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={() => moveEdit(idx, -1)}
+                    disabled={idx === 0 || loading}
+                    className="px-2 py-1 text-xs border border-gold/30 rounded text-brown-mid hover:bg-gold/10 disabled:opacity-30"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveEdit(idx, 1)}
+                    disabled={idx === props.contentLinks.length - 1 || loading}
+                    className="px-2 py-1 text-xs border border-gold/30 rounded text-brown-mid hover:bg-gold/10 disabled:opacity-30"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEdit(link)}
+                    disabled={loading}
+                    className="px-2 py-1 text-xs border border-gold/30 rounded text-brown-mid hover:bg-gold/10 disabled:opacity-30"
+                  >
+                    수정
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeEdit(link)}
+                    disabled={loading}
+                    className="px-2 py-1 text-xs border border-red-200 rounded text-red-400 hover:bg-red-50 disabled:opacity-30"
+                  >
+                    해제
+                  </button>
+                </div>
+              </div>
+            )
+          )}
         </div>
       )}
     </div>
