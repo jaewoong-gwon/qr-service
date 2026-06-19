@@ -36,6 +36,7 @@ export interface ContentLibraryItem {
   id: string
   title: string
   body: string
+  icon?: string | null
 }
 
 export interface ProductContentLink {

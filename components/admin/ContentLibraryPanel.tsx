@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import type { ContentLibraryItem, ProductContentLink } from '@/lib/types'
+import { EmojiPicker } from '@/components/admin/EmojiPicker'
 
 export interface ContentLinkFormData {
   content_id: string | null
-  new_content: { title: string; body: string } | null
+  new_content: { title: string; body: string; icon?: string | null } | null
   sort_order: number
 }
 
@@ -36,10 +37,12 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
   const [showNewForm, setShowNewForm] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newBody, setNewBody] = useState('')
+  const [newIcon, setNewIcon] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editBody, setEditBody] = useState('')
+  const [editIcon, setEditIcon] = useState<string | null>(null)
 
   const usedContentIds =
     props.mode === 'create'
@@ -50,6 +53,12 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
     if (link.new_content) return link.new_content.title
     const item = props.contentLibrary.find((c) => c.id === link.content_id)
     return item?.title ?? link.content_id ?? ''
+  }
+
+  function resolveIcon(link: ContentLinkFormData): string | null | undefined {
+    if (link.new_content) return link.new_content.icon
+    const item = props.contentLibrary.find((c) => c.id === link.content_id)
+    return item?.icon
   }
 
   function handleDropdownSelect(contentId: string) {
@@ -85,6 +94,7 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
     setEditingLinkId(link.id)
     setEditTitle(link.content_library.title)
     setEditBody(link.content_library.body)
+    setEditIcon(link.content_library.icon ?? null)
   }
 
   async function confirmEdit(link: ProductContentLink) {
@@ -93,7 +103,7 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
     const res = await fetch(`/api/content-library/${link.content_library.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: editTitle.trim(), body: editBody.trim() }),
+      body: JSON.stringify({ title: editTitle.trim(), body: editBody.trim(), icon: editIcon }),
     })
     if (res.ok) {
       const updated: ContentLibraryItem = await res.json()
@@ -162,12 +172,13 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
     if (props.mode === 'create') {
       const next: ContentLinkFormData = {
         content_id: null,
-        new_content: { title: newTitle.trim(), body: newBody.trim() },
+        new_content: { title: newTitle.trim(), body: newBody.trim(), icon: newIcon },
         sort_order: props.contentLinks.length,
       }
       props.onChange([...props.contentLinks, next])
       setNewTitle('')
       setNewBody('')
+      setNewIcon(null)
       setShowNewForm(false)
       return
     }
@@ -176,7 +187,7 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
     const itemRes = await fetch('/api/content-library', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: newTitle.trim(), body: newBody.trim() }),
+      body: JSON.stringify({ title: newTitle.trim(), body: newBody.trim(), icon: newIcon }),
     })
     if (!itemRes.ok) { setLoading(false); return }
     const newItem: ContentLibraryItem = await itemRes.json()
@@ -193,6 +204,7 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
     }
     setNewTitle('')
     setNewBody('')
+    setNewIcon(null)
     setShowNewForm(false)
     setLoading(false)
   }
@@ -233,12 +245,15 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
       {showNewForm && (
         <div className="border border-gold/30 rounded-lg p-4 bg-white flex flex-col gap-3">
           <p className="text-xs font-bold text-brown-dark">새 콘텐츠 항목</p>
-          <input
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="제목 (예: 훈민정음, 달항아리)"
-            className={inputClass}
-          />
+          <div className="flex gap-2 items-center">
+            <EmojiPicker value={newIcon} onChange={setNewIcon} />
+            <input
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="제목 (예: 훈민정음, 달항아리)"
+              className={`${inputClass} flex-1`}
+            />
+          </div>
           <textarea
             value={newBody}
             onChange={(e) => setNewBody(e.target.value)}
@@ -257,7 +272,7 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
             </button>
             <button
               type="button"
-              onClick={() => { setShowNewForm(false); setNewTitle(''); setNewBody('') }}
+              onClick={() => { setShowNewForm(false); setNewTitle(''); setNewBody(''); setNewIcon(null) }}
               className="px-4 py-2 text-sm border border-gold/40 rounded-lg text-brown-light hover:bg-gold/10"
             >
               취소
@@ -270,7 +285,10 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
         <div className="flex flex-col gap-2">
           {props.contentLinks.map((link, idx) => (
             <div key={idx} className="flex items-center gap-2 border border-gold/20 rounded-lg px-3 py-2 bg-white">
-              <span className="flex-1 text-sm text-brown-dark">{resolveTitle(link)}</span>
+              <span className="flex-1 text-sm text-brown-dark">
+                {resolveIcon(link) && <span className="mr-1">{resolveIcon(link)}</span>}
+                {resolveTitle(link)}
+              </span>
               <div className="flex gap-1">
                 <button
                   type="button"
@@ -327,12 +345,15 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
                     </button>
                   </div>
                 </div>
-                <input
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder="제목"
-                  className={inputClass}
-                />
+                <div className="flex gap-2 items-center">
+                  <EmojiPicker value={editIcon} onChange={setEditIcon} />
+                  <input
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder="제목"
+                    className={`${inputClass} flex-1`}
+                  />
+                </div>
                 <textarea
                   value={editBody}
                   onChange={(e) => setEditBody(e.target.value)}
@@ -368,7 +389,10 @@ export function ContentLibraryPanel(props: ContentLibraryPanelProps) {
               </div>
             ) : (
               <div key={link.id} className="flex items-center gap-2 border border-gold/20 rounded-lg px-3 py-2 bg-white">
-                <span className="flex-1 text-sm text-brown-dark">{link.content_library.title}</span>
+                <span className="flex-1 text-sm text-brown-dark">
+                  {link.content_library.icon && <span className="mr-1">{link.content_library.icon}</span>}
+                  {link.content_library.title}
+                </span>
                 <div className="flex gap-1">
                   <button
                     type="button"

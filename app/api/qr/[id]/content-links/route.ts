@@ -31,7 +31,7 @@ export async function POST(
   const { data, error } = await supabase
     .from('product_content_links')
     .insert({ product_id: product.id, content_id, sort_order })
-    .select('id, sort_order, content_library ( id, title, body )')
+    .select('id, sort_order, content_library ( id, title, body, icon )')
     .single()
 
   if (error) {

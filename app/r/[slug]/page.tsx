@@ -21,7 +21,7 @@ export default async function ProductPage({
         notice_groups ( notice_group_items ( content, sort_order ) ),
         closing_templates ( id, name, body ),
         product_sections ( * ),
-        product_content_links ( id, sort_order, content_library ( id, title, body ) )
+        product_content_links ( id, sort_order, content_library ( id, title, body, icon ) )
       )
     `)
     .eq('slug', slug)

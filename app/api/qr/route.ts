@@ -21,7 +21,7 @@ interface ClosingInput {
 }
 interface ContentLinkInput {
   content_id: string | null
-  new_content: { title: string; body: string } | null
+  new_content: { title: string; body: string; icon?: string | null } | null
   sort_order: number
 }
 
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
       if (link.new_content) {
         const { data: newItem, error: newItemError } = await supabase
           .from('content_library')
-          .insert({ title: link.new_content.title.trim(), body: link.new_content.body.trim() })
+          .insert({ title: link.new_content.title.trim(), body: link.new_content.body.trim(), icon: link.new_content.icon ?? null })
           .select('id')
           .single()
         if (newItemError || !newItem) {

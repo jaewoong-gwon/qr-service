@@ -23,7 +23,7 @@ export default async function EditPage({
             notice_groups ( id, name, notice_group_items ( id, content, sort_order ) ),
             closing_templates ( id, name, body ),
             product_sections ( * ),
-            product_content_links ( id, sort_order, content_library ( id, title, body ) )
+            product_content_links ( id, sort_order, content_library ( id, title, body, icon ) )
           )
         `)
         .eq('id', id)
@@ -42,7 +42,7 @@ export default async function EditPage({
         .order('name'),
       supabase
         .from('content_library')
-        .select('id, title, body')
+        .select('id, title, body, icon')
         .order('title'),
     ])
 

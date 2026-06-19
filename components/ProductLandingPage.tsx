@@ -32,6 +32,7 @@ export function ProductLandingPage({ product }: ProductLandingPageProps) {
       title: link.content_library.title,
       body: link.content_library.body,
       sort_order: link.sort_order,
+      icon: link.content_library.icon ?? null,
     }))
 
   const sections = (product.product_sections ?? [])

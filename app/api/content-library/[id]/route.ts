@@ -10,16 +10,16 @@ export async function PATCH(
   if (!adminId) return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 })
 
   const { id } = await params
-  const { title, body } = await request.json()
+  const { title, body, icon } = await request.json()
   if (!title?.trim()) return NextResponse.json({ error: '제목을 입력해주세요' }, { status: 400 })
   if (!body?.trim()) return NextResponse.json({ error: '설명을 입력해주세요' }, { status: 400 })
 
   const supabase = createServerSupabaseClient()
   const { data, error } = await supabase
     .from('content_library')
-    .update({ title: title.trim(), body: body.trim() })
+    .update({ title: title.trim(), body: body.trim(), icon: icon ?? null })
     .eq('id', id)
-    .select('id, title, body')
+    .select('id, title, body, icon')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

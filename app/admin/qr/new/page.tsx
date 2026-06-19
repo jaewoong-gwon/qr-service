@@ -94,8 +94,8 @@ export default function NewQrPage() {
         id: `preview-${i}`,
         sort_order: l.sort_order,
         content_library: l.new_content
-          ? { id: `new-${i}`, title: l.new_content.title, body: l.new_content.body }
-          : { id: l.content_id!, title: contentLibrary.find((c) => c.id === l.content_id)?.title ?? '', body: contentLibrary.find((c) => c.id === l.content_id)?.body ?? '' },
+          ? { id: `new-${i}`, title: l.new_content.title, body: l.new_content.body, icon: l.new_content.icon ?? null }
+          : { id: l.content_id!, title: contentLibrary.find((c) => c.id === l.content_id)?.title ?? '', body: contentLibrary.find((c) => c.id === l.content_id)?.body ?? '', icon: contentLibrary.find((c) => c.id === l.content_id)?.icon ?? null },
       })) as ProductContentLink[],
   }
 
