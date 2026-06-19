@@ -37,7 +37,8 @@ export async function getAdminId(request: NextRequest): Promise<string | null> {
       .eq('admin_id', adminTextId)
       .single()
     return data?.id ?? null
-  } catch {
+  } catch (err) {
+    console.error('[getAdminId] 인증 실패:', err instanceof Error ? err.message : String(err))
     return null
   }
 }
