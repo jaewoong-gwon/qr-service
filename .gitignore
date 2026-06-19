@@ -46,8 +46,7 @@ playwright-report/
 test-results/
 e2e/.auth/
 
-# Local scripts (contain secrets when run)
-scripts/
+# Scripts directory tracked (secrets are passed via env vars, not hardcoded)
 
 # Claude Code & Superpowers (local tooling)
 .claude/

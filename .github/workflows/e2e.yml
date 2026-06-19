@@ -22,6 +22,14 @@ jobs:
 
       - run: npm ci
 
+      - name: Seed admin account
+        run: npx tsx scripts/create-admin.ts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ADMIN_ID: admin
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_INITIAL_PASSWORD }}
+
       - run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
