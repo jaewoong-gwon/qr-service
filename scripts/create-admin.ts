@@ -69,7 +69,7 @@ async function main() {
 
   const args = parseArgs()
   const adminId = args.id ?? process.env.ADMIN_ID ?? 'admin'
-  const password = args.password ?? process.env.ADMIN_PASSWORD
+  const password = args.password ?? process.env.ADMIN_PASSWORD ?? crypto.randomUUID()
 
   if (!password) {
     console.error('❌ 비밀번호를 지정해야 합니다.')
