@@ -9,6 +9,7 @@ interface SectionInput {
   title: string | null
   body: string | null
   sort_order: number
+  icon?: string | null
 }
 interface NoticeInput {
   group_id: string | null

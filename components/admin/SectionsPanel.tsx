@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { ProductSection } from '@/lib/types'
+import { EmojiPicker } from '@/components/admin/EmojiPicker'
 
 interface SectionsPanelCreateProps {
   mode: 'create'
@@ -153,13 +154,22 @@ export function SectionsPanel(props: SectionsPanelProps) {
             <div className="flex flex-col gap-3">
               <div>
                 <p className={labelClass}>제목</p>
-                <input
-                  value={section.title ?? ''}
-                  onChange={(e) => updateField(sIdx, 'title', e.target.value || null)}
-                  onBlur={(e) => saveField(sIdx, 'title', e.target.value || null)}
-                  placeholder="제목을 입력하세요"
-                  className={inputClass}
-                />
+                <div className="flex gap-2 items-center">
+                  <EmojiPicker
+                    value={section.icon ?? null}
+                    onChange={(emoji) => {
+                      updateField(sIdx, 'icon', emoji)
+                      if (props.mode === 'edit') saveField(sIdx, 'icon', emoji)
+                    }}
+                  />
+                  <input
+                    value={section.title ?? ''}
+                    onChange={(e) => updateField(sIdx, 'title', e.target.value || null)}
+                    onBlur={(e) => saveField(sIdx, 'title', e.target.value || null)}
+                    placeholder="제목을 입력하세요"
+                    className={`${inputClass} flex-1`}
+                  />
+                </div>
               </div>
               <div>
                 <p className={labelClass}>설명</p>

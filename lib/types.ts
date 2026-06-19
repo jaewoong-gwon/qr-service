@@ -58,6 +58,7 @@ export interface ProductSection {
   title: string | null
   body: string | null
   sort_order: number
+  icon?: string | null
 }
 
 export interface Product {
